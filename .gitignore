@@ -6,3 +6,4 @@ src/microservices/TaskService/TaskRead/obj/
 src/microservices/TaskService/TaskRead/bin/
 src/microservices/TaskService/TaskWrite/obj/
 src/microservices/TaskService/TaskWrite/bin/
+.idea

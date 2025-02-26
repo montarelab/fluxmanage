@@ -10,11 +10,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "src\microservices
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Task", "Task", "{CDA632A4-681D-F4D7-4ECE-4CB6B30F6740}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskCommon", "src\microservices\Task\TaskCommon\TaskCommon.csproj", "{77F1EDFC-C326-40D1-EE53-1BCC08B2E017}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskCommon", "src\microservices\TaskService\TaskCommon\TaskCommon.csproj", "{77F1EDFC-C326-40D1-EE53-1BCC08B2E017}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskWrite", "src\microservices\Task\TaskWrite\TaskWrite.csproj", "{CE11EE7C-06C9-99BB-9819-923885F5A62D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskWrite", "src\microservices\TaskService\TaskWrite\TaskWrite.csproj", "{CE11EE7C-06C9-99BB-9819-923885F5A62D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskRead", "src\microservices\Task\TaskRead\TaskRead.csproj", "{792C88D0-6CEE-1245-3DAD-0F7FA7F05EDA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskRead", "src\microservices\TaskService\TaskRead\TaskRead.csproj", "{792C88D0-6CEE-1245-3DAD-0F7FA7F05EDA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
