@@ -1,2 +1,8 @@
-src/microservices/TaskService/obj/
-src/microservices/TaskService/bin/
+src/microservices/Common/obj/
+src/microservices/Common/bin/
+src/microservices/TaskService/TaskCommon/obj/
+src/microservices/TaskService/TaskCommon/bin/
+src/microservices/TaskService/TaskRead/obj/
+src/microservices/TaskService/TaskRead/bin/
+src/microservices/TaskService/TaskWrite/obj/
+src/microservices/TaskService/TaskWrite/bin/
