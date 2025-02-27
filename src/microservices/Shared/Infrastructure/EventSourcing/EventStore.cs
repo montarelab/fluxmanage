@@ -33,7 +33,7 @@ public class EventStore(IEventStoreRepository eventStoreRepository, IEventProduc
             await eventStoreRepository.SaveAsync(eventModel);
 
             string topic = Environment.GetEnvironmentVariable("KAFKA_TOPIC")!;
-            await eventProducer.ProduceAsync(topic!, new VersionedEvent(@event, version));
+            await eventProducer.ProduceAsync(topic!, @event with { Version = version });
         }
     }
 

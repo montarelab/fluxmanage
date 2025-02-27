@@ -28,10 +28,10 @@ public class TaskAggregate : AggregateRoot
     {
         RaiseEvent(new TaskCreatedEvent
         (
-            taskId: id,
-            projectId: projectId,
-            title: title,
-            createdBy: createdBy
+            Id: id,
+            ProjectId: projectId,
+            Title: title,
+            CreatedBy: createdBy
         ));
     }
     
@@ -55,7 +55,7 @@ public class TaskAggregate : AggregateRoot
         
         RaiseEvent(new TaskUpdatedEvent
         (
-            taskId: Id
+            Id: Id
         ));
     }
     

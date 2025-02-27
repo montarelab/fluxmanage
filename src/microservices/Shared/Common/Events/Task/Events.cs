@@ -1,21 +1,13 @@
 namespace Common.Events.Task;
 
-public class TaskAssignedEvent(Guid taskId, Guid assigneeId) : DomainEvent(taskId)
-{
-    public Guid AssigneeId { get; set; } = assigneeId;
-}
+public record TaskAssignedEvent(Guid Id, Guid AssigneeId) : DomainEvent(Id);
 
-public class TaskCompletedEvent(Guid taskId) : DomainEvent(taskId);
+public record TaskCompletedEvent(Guid Id) : DomainEvent(Id);
 
-public class TaskDeletedEvent(Guid taskId) : DomainEvent(taskId);
+public record TaskDeletedEvent(Guid Id) : DomainEvent(Id);
 
-public class TaskCreatedEvent(Guid taskId, Guid projectId, string title, Guid createdBy) : DomainEvent(taskId)
-{
-    public string Title { get; set; } = title;
-    public Guid ProjectId { get; set; } = projectId;
-    public Guid CreatedBy { get; set; } = createdBy;
-}
+public record TaskCreatedEvent(Guid Id, Guid ProjectId, string Title, Guid CreatedBy) : DomainEvent(Id);
 
-public class TaskUpdatedEvent(Guid taskId) : DomainEvent(taskId);
+public record TaskUpdatedEvent(Guid Id) : DomainEvent(Id);
 
 // todo add further info 

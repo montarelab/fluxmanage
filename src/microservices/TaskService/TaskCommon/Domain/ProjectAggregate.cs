@@ -15,9 +15,9 @@ public class ProjectAggregate : AggregateRoot
     {
         RaiseEvent(new ProjectCreatedEvent
         (
-            projectId: id,
-            name: name,
-            createdBy: createdBy
+            Id: id,
+            Name: name,
+            CreatedBy: createdBy
         ));
     }
     
@@ -49,8 +49,8 @@ public class ProjectAggregate : AggregateRoot
         
         RaiseEvent(new ProjectUpdatedEvent
         (
-            projectId: Id,
-            title: name
+            Id: Id,
+            Title: name
         ));
     }
     

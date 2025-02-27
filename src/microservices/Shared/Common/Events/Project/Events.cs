@@ -1,17 +1,9 @@
 namespace Common.Events.Project;
 
-public class ProjectCreatedEvent(Guid projectId, string name, Guid createdBy) 
-    : DomainEvent(projectId)
-{
-    public string Name { get; set; } = name;
-    public Guid CreatedBy { get; set; } = createdBy;
-}
+public record ProjectCreatedEvent(Guid Id, string Name, Guid CreatedBy) : DomainEvent(Id);
     
-public class ProjectDeletedEvent(Guid projectId) : DomainEvent(projectId);
+public record ProjectDeletedEvent(Guid Id) : DomainEvent(Id);
 
-public class ProjectUpdatedEvent(Guid projectId, string title) : DomainEvent(projectId)
-{
-    public string Title { get; set; } = title;
-}
+public record ProjectUpdatedEvent(Guid Id, string Title) : DomainEvent(Id);
 
 

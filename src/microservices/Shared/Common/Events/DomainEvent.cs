@@ -1,6 +1,7 @@
 namespace Common.Events;
 
-public abstract class DomainEvent(Guid id)
+public abstract record DomainEvent(Guid Id)
 {
-    public DateTime CreatedDate { get; set; } = DateTime.Now;
+    public DateTime CreatedDate { get; init; } = DateTime.Now;
+    public int Version { get; init; } = -1;
 }
