@@ -6,19 +6,18 @@ namespace TaskCommon.Domain;
 public class ProjectAggregate : AggregateRoot
 {
     private string Name { get; set; } = string.Empty;
-    private Guid UserId { get; set; } = Guid.Empty;
+    private Guid CreatedBy { get; set; } = Guid.Empty;
     private DateTime CreatedDate { get; set; } = DateTime.Now;
     
     public ProjectAggregate() { }
 
-    public ProjectAggregate(Guid id, string name, Guid userId)
+    public ProjectAggregate(Guid id, string name, Guid createdBy)
     {
         RaiseEvent(new ProjectCreatedEvent
         (
             projectId: id,
             name: name,
-            userId: userId,
-            createdDate: DateTime.Now
+            createdBy: createdBy
         ));
     }
     
@@ -27,7 +26,7 @@ public class ProjectAggregate : AggregateRoot
         IsActive = true;
         Id = @event.Id;
         Name = @event.Name;
-        UserId = @event.UserId;
+        CreatedBy = @event.CreatedBy;
         CreatedDate = @event.CreatedDate;
     }
     

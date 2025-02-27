@@ -15,7 +15,6 @@ public class TaskCreatedEvent(Guid taskId, Guid projectId, string title) : Domai
     public Guid ProjectId { get; set; } = projectId;
 }
 
-
 public class TaskUpdatedEvent(Guid taskId) : DomainEvent(taskId);
 
 // todo add further info 

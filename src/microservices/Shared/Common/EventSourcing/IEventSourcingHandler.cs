@@ -2,11 +2,11 @@ using Common.Domain;
 
 namespace Common.EventSourcing;
 
-public interface IEventSourcingHandler<T>
+public interface IEventSourcingHandler<TAggregateRoot> where TAggregateRoot : AggregateRoot
 {
-    Task SaveAsync(AggregateRoot aggregateRoot);
+    Task SaveAsync(TAggregateRoot aggregateRoot);
 
-    Task<T> GetByIdAsync(Guid aggregateId);
+    Task<TAggregateRoot?> GetByIdAsync(Guid aggregateId);
 	
     Task RepublishEventsAsync();
 }

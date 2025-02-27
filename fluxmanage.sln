@@ -18,7 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskRead", "src\microservic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "src\microservices\Shared\Infrastructure\Infrastructure.csproj", "{2DBCAA72-EEA2-4E98-99F2-7B2D78287EA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth", "Auth\Auth.csproj", "{ABA38130-56D1-43F6-82B3-C2939149F28D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth", "src\microservices\Auth\Auth.csproj", "{ABA38130-56D1-43F6-82B3-C2939149F28D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

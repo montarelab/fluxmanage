@@ -1,17 +1,25 @@
 namespace Common.Auth;
 
-public enum Resource
+public enum Resources
 {
     Task,
     Project
 }
 
-public enum Action
+public enum Actions
 {
     Create,
     Read,
     Update,
     Delete,
     Assignee
+}
+
+public static class Permissions
+{
+    public static string GetPermission(Resources resources, Actions actions)
+    {
+        return $"{resources}.{actions}";
+    }
 }
 
