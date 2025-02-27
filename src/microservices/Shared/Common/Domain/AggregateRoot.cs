@@ -4,7 +4,7 @@ namespace Common.Domain;
 
 public abstract class AggregateRoot
 {
-    private readonly List<BaseEvent> _changes = []; // uncommitted changes
+    private readonly List<DomainEvent> _changes = []; // uncommitted changes
 
     public Guid Id { get; set; }
     public bool IsActive { get; set; }
@@ -17,7 +17,7 @@ public abstract class AggregateRoot
     ///     Right after execution we clear _changes
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<BaseEvent> GetUncommittedChanges()
+    public IEnumerable<DomainEvent> GetUncommittedChanges()
     {
         return _changes;
     }
@@ -35,7 +35,7 @@ public abstract class AggregateRoot
     /// <param name="event"></param>
     /// <param name="isNew"></param>
     /// <exception cref="ArgumentNullException"></exception>
-    private void ApplyChange(BaseEvent @event, bool isNew)
+    private void ApplyChange(DomainEvent @event, bool isNew)
     {
         var method = GetType().GetMethod("Apply", [@event.GetType()]);
 
@@ -52,7 +52,7 @@ public abstract class AggregateRoot
     ///     Invokes event
     /// </summary>
     /// <param name="event"></param>
-    protected void RaiseEvent(BaseEvent @event)
+    protected void RaiseEvent(DomainEvent @event)
     {
         ApplyChange(@event, true);
     }
@@ -63,7 +63,7 @@ public abstract class AggregateRoot
     ///     It is being running only while fetching Aggregate from EventSourcingHandler
     /// </summary>
     /// <param name="events"></param>
-    public void ReplayEvents(IEnumerable<BaseEvent> events)
+    public void ReplayEvents(IEnumerable<DomainEvent> events)
     {
         foreach (var @event in events) ApplyChange(@event, false);
     }

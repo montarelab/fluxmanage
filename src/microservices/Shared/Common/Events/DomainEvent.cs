@@ -1,6 +1,6 @@
 namespace Common.Events;
 
-public abstract class BaseEvent(Guid id)
+public abstract class DomainEvent(Guid id)
 {
     public Guid Id { get; set; } = id;
 }

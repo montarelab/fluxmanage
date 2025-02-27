@@ -48,14 +48,14 @@ public class ProjectAggregate : AggregateRoot
             throw new InvalidOperationException($"You cannot set the same name: {name}.");
         }
         
-        RaiseEvent(new ProjectRenamedEvent
+        RaiseEvent(new ProjectUpdatedEvent
         (
             projectId: Id,
             title: name
         ));
     }
     
-    public void Apply(ProjectRenamedEvent @event)
+    public void Apply(ProjectUpdatedEvent @event)
     {
         Name = @event.Title;
     }

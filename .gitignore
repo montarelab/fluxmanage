@@ -1,5 +1,5 @@
-src/microservices/Common/obj/
-src/microservices/Common/bin/
+src/microservices/Shared/Common/obj/
+src/microservices/Shared/Common/bin/
 src/microservices/TaskService/TaskCommon/obj/
 src/microservices/TaskService/TaskCommon/bin/
 src/microservices/TaskService/TaskRead/obj/
@@ -7,3 +7,6 @@ src/microservices/TaskService/TaskRead/bin/
 src/microservices/TaskService/TaskWrite/obj/
 src/microservices/TaskService/TaskWrite/bin/
 .idea
+src/microservices/Shared/Infrastructure/obj/
+src/microservices/Shared/Infrastructure/bin/
+
