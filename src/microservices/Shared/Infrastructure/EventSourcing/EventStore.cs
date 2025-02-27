@@ -1,22 +1,66 @@
 using Common.Events;
 using Common.EventSourcing;
+using Common.Exceptions;
 
 namespace Infrastructure.EventSourcing;
 
-public class EventStore : IEventStore
+public class EventStore(IEventStoreRepository eventStoreRepository, IEventProducer eventProducer) : IEventStore
 {
-    public Task SaveEventsAsync(Guid aggregateId, IEnumerable<DomainEvent> events, int expectedVersion)
+    public async Task SaveEventsAsync(Guid aggregateId, IEnumerable<DomainEvent> events, int expectedVersion)
     {
-        throw new NotImplementedException();
+        var eventStream = await eventStoreRepository.FindByAggregateId(aggregateId);
+
+        if (expectedVersion != -1 && eventStream[^1].Version != expectedVersion)// ^1 means the last element
+        {
+            throw new ConcurrencyException();
+        }
+        
+        int version = expectedVersion;
+        foreach (var @event in events)
+        {
+            version++;
+            string eventType = @event.GetType().Name;
+
+            var eventModel = new EventModel{
+                TimeStamp = DateTime.Now,
+                AggregateIdentifier = aggregateId,
+                AggregateType = @event.GetType().ToString(),
+                Version = version,
+                EventType = eventType,
+                EventData = @event
+            };
+			
+            await eventStoreRepository.SaveAsync(eventModel);
+
+            string topic = Environment.GetEnvironmentVariable("KAFKA_TOPIC")!;
+            await eventProducer.ProduceAsync(topic!, new VersionedEvent(@event, version));
+        }
     }
 
-    public Task<List<DomainEvent>> GetEventsAsync(Guid aggregateId)
+    public async Task<List<DomainEvent>> GetEventsAsync(Guid aggregateId)
     {
-        throw new NotImplementedException();
+        var eventStream = await eventStoreRepository.FindByAggregateId(aggregateId);
+
+        if (eventStream == null || eventStream.Count == 0)
+        {
+            throw new AggregateNotFoundException("Incorrect post Id provided! "+aggregateId);
+        }
+
+        return eventStream
+            .OrderBy(x => x.Version)
+            .Select(x => x.EventData)
+            .ToList();
     }
 
-    public Task<List<Guid>> GetAggregateIdsAsync()
+    public async Task<List<Guid>> GetAggregateIdsAsync()
     {
-        throw new NotImplementedException();
+        List<EventModel> eventStream = await eventStoreRepository.FindAllAsync();
+		
+        if (eventStream.Count == 0) return[];
+		
+        return eventStream
+            .Select(x => x.AggregateIdentifier)
+            .Distinct()
+            .ToList();
     }
 }

@@ -31,7 +31,7 @@ public static class DeleteProject
 
         public override async Task HandleAsync(DeleteProjectRequest req, CancellationToken ct)
         {
-            var project = await EventSourcingHandler.GetByIdAsync(req.Id);
+            var project = (await EventSourcingHandler.GetByIdAsync(req.Id))!;
             project.DeleteProject();
             await EventSourcingHandler.SaveAsync(project);
             await SendAsync(new DeleteProjectResponse(project.Id), cancellation: ct);

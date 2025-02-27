@@ -9,10 +9,11 @@ public class TaskCompletedEvent(Guid taskId) : DomainEvent(taskId);
 
 public class TaskDeletedEvent(Guid taskId) : DomainEvent(taskId);
 
-public class TaskCreatedEvent(Guid taskId, Guid projectId, string title) : DomainEvent(taskId)
+public class TaskCreatedEvent(Guid taskId, Guid projectId, string title, Guid createdBy) : DomainEvent(taskId)
 {
     public string Title { get; set; } = title;
     public Guid ProjectId { get; set; } = projectId;
+    public Guid CreatedBy { get; set; } = createdBy;
 }
 
 public class TaskUpdatedEvent(Guid taskId) : DomainEvent(taskId);

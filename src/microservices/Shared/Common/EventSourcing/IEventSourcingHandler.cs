@@ -7,6 +7,4 @@ public interface IEventSourcingHandler<TAggregateRoot> where TAggregateRoot : Ag
     Task SaveAsync(TAggregateRoot aggregateRoot);
 
     Task<TAggregateRoot?> GetByIdAsync(Guid aggregateId);
-	
-    Task RepublishEventsAsync();
 }

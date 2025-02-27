@@ -2,11 +2,10 @@ using Common.Events;
 
 namespace Common.Domain;
 
-public abstract class AggregateRoot
+public abstract class AggregateRoot : IEntity
 {
     private readonly List<DomainEvent> _changes = []; // uncommitted changes
 
-    public Guid Id { get; set; }
     public bool IsActive { get; set; }
     
     public int Version { get; set; } = -1; // 0 is the first version

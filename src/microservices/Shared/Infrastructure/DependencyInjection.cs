@@ -9,6 +9,7 @@ public static class DependencyInjection
     public static IServiceCollection AddEventSourcingInfrastructure(this IServiceCollection services)
     {
         return services
+            .AddScoped<IEventStoreRepository, MongoDbEventStoreRepository>()
             .AddScoped<IEventStore, EventStore>()
             .AddScoped<IEventProducer, EventProducer>()
             .AddScoped(typeof(IEventSourcingHandler<>), typeof(EventSourcingHandler<>));

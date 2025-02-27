@@ -1,14 +1,22 @@
 using Common.Domain;
 using Common.Events.Project;
 using Common.Events.Task;
+using TaskCommon.DTO;
 
 namespace TaskCommon.Domain;
 
 public class TaskAggregate : AggregateRoot
 {
     private string Title { get; set; } = string.Empty;
+    private string Description { get; set; } = string.Empty;
     private Guid CreatedBy { get; set; } = Guid.Empty;
+    private Guid? EpicId { get; set; } 
+    private Guid? ParentTaskId { get; set; }
+    private int EstimatedStoryPoints { get; set; } = 0;
     private DateTime CreatedDate { get; set; } = DateTime.Now;
+    private DateTime StartDate { get; set; } = DateTime.Now; 
+    private DateTime DueDate { get; set; } = DateTime.Now.AddDays(7);
+    private IDictionary<string, string>? CustomFields { get; set; }
     
     private Guid AssigneeId { get; set; }
     public Guid ProjectId { get; set; }
@@ -21,8 +29,9 @@ public class TaskAggregate : AggregateRoot
         RaiseEvent(new TaskCreatedEvent
         (
             taskId: id,
-            projectId: id,
-            title: title
+            projectId: projectId,
+            title: title,
+            createdBy: createdBy
         ));
     }
     
@@ -37,21 +46,11 @@ public class TaskAggregate : AggregateRoot
     
     
     // todo some complex model must be here
-    public void Update(string name)
+    public void Update(TaskUpdateData updatedData)
     {
         if (!IsActive)
         {
             throw new InvalidOperationException("You cannot edit deleted project!");
-        }
-        
-        if(string.IsNullOrWhiteSpace(name))
-        {
-            throw new InvalidOperationException("Project name cannot be empty.");
-        }
-
-        if (string.Equals(name, Title, StringComparison.Ordinal))
-        {
-            throw new InvalidOperationException($"You cannot set the same name: {name}.");
         }
         
         RaiseEvent(new TaskUpdatedEvent

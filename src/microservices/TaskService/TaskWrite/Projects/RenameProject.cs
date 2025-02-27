@@ -38,7 +38,7 @@ public static class RenameProject
 
         public override async Task HandleAsync(RenameProjectRequest req, CancellationToken ct)
         {
-            var project = await EventSourcingHandler.GetByIdAsync(req.Id);
+            var project = (await EventSourcingHandler.GetByIdAsync(req.Id))!;
             project.EditName(req.NewTitle);
             await EventSourcingHandler.SaveAsync(project);
             await SendAsync(new RenameProjectResponse(project.Id), cancellation: ct);

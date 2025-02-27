@@ -19,8 +19,8 @@ public static class CreateProject
             RuleFor(x => x.Title)
                 .NotEmpty()
                 .WithMessage("Title is required")
-                .MaximumLength(20)
-                .WithMessage("Title must be less than 20 characters");
+                .MaximumLength(10)
+                .WithMessage("Title must be less than 10 characters");
         }
     }
     
