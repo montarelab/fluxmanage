@@ -27,8 +27,8 @@ public static class CreateProject
     
     public class Endpoint : Endpoint<CreateProjectRequest, CreateProjectResponse>
     {
-        private IEventSourcingHandler<ProjectAggregate> EventSourcingHandler { get; set; } = null!;
-        private ICurrentUserService CurrentUserService { get; set; } = null!;
+        public IEventSourcingHandler<ProjectAggregate> EventSourcingHandler { get; set; } = null!;
+        public ICurrentUserService CurrentUserService { get; set; } = null!;
         
         public override void Configure()
         {
