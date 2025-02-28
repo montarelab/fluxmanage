@@ -15,11 +15,12 @@ builder.Services.AddFastEndpoints();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseFastEndpoints();
 app.UseHttpsRedirection();
+
+app.MapGet("/health", () => "Healthy");
+
 app.Run();

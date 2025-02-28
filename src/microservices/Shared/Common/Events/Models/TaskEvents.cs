@@ -13,8 +13,3 @@ public record TaskDeletedEvent(Guid Id) : EntityDeletedEvent<TaskAggregate>(Id);
 public record TaskAssignedEvent(Guid Id, Guid AssigneeId) : DomainEvent<TaskAggregate>(Id);
 
 public record TaskCompletedEvent(Guid Id) : DomainEvent<TaskAggregate>(Id);
-
-
-
-
-// todo add further info 
