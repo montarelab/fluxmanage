@@ -12,8 +12,8 @@ public static class DependencyInjection
         return services
             .AddScoped<ICurrentUserService, CurrentUserService>()
             .AddScoped<IEventStoreRepository, MongoDbEventStoreRepository>()
-            .AddScoped<IEventStore, EventStore>()
             .AddScoped<IEventProducer, EventProducer>()
+            .AddScoped<IEventStore, EventStore>()
             .AddScoped(typeof(IEventSourcingHandler<>), typeof(EventSourcingHandler<>));
     } 
 }

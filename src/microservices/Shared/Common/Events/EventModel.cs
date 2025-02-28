@@ -10,7 +10,7 @@ public class EventModel
     public string Id { get; set; } = string.Empty;
 
     public DateTime TimeStamp { get; set; }
-
+    
     public Guid AggregateIdentifier { get; set; }// an Id of an aggregate that the event relates to
 
     public string AggregateType { get; set; } = string.Empty;

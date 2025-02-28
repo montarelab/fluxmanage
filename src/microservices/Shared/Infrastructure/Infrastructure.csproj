@@ -14,7 +14,6 @@
       <PackageReference Include="Confluent.Kafka" Version="2.8.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0-preview.1.25080.5" />
       <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.0-preview.1.25080.5" />
-      <PackageReference Include="mongocsharpdriver" Version="2.30.0" />
     </ItemGroup>
 
 </Project>
