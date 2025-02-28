@@ -15,10 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Epic\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Shared\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\TaskCommon\TaskCommon.csproj" />
   </ItemGroup>

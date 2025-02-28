@@ -1,6 +1,6 @@
 using System.Reflection;
 using Common.DTO;
-using Common.Events.Task;
+using Common.Events.Models;
 using TaskStatus = TaskCommon.Domain.TaskStatus;
 
 namespace Common.Domain.Models;
@@ -48,7 +48,7 @@ public class TaskAggregate : AggregateRoot
     {
         if (!IsActive)
         {
-            throw new InvalidOperationException("You cannot edit deleted project!");
+            throw new InvalidOperationException("You cannot edit deleted task!");
         }
         
         RaiseEvent(new TaskUpdatedEvent

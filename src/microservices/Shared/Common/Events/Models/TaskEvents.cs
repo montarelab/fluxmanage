@@ -1,6 +1,6 @@
 using Common.Domain.Models;
 
-namespace Common.Events.Task;
+namespace Common.Events.Models;
 
 public record TaskCreatedEvent(Guid Id, Guid ProjectId, string Title, Guid CreatedBy) 
     : EntityCreatedEvent<TaskAggregate>(Id);

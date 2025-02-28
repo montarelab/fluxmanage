@@ -1,6 +1,6 @@
 using Common.Domain.Models;
 
-namespace Common.Events.Project;
+namespace Common.Events.Models;
 
 public record ProjectCreatedEvent(Guid Id, string Name, Guid CreatedBy) : EntityCreatedEvent<ProjectAggregate>(Id);
 

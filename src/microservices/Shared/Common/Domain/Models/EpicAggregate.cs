@@ -2,30 +2,33 @@ using Common.Events.Models;
 
 namespace Common.Domain.Models;
 
-public class ProjectAggregate : AggregateRoot
+public class EpicAggregate : AggregateRoot
 {
     private string Name { get; set; } = string.Empty;
     private Guid CreatedBy { get; set; } = Guid.Empty;
+    private Guid ProjectId { get; set; }
     private DateTime CreatedDate { get; set; } = DateTime.Now;
     
-    public ProjectAggregate() { }
+    public EpicAggregate() { }
 
-    public ProjectAggregate(Guid id, string name, Guid createdBy)
+    public EpicAggregate(Guid id, string name, Guid projectId, Guid createdBy)
     {
-        RaiseEvent(new ProjectCreatedEvent
+        RaiseEvent(new EpicCreatedEvent
         (
             Id: id,
             Name: name,
+            ProjectId: projectId,
             CreatedBy: createdBy
         ));
     }
     
-    public void Apply(ProjectCreatedEvent @event)
+    public void Apply(EpicCreatedEvent @event)
     {
         IsActive = true;
         Id = @event.Id;
         Name = @event.Name;
         CreatedBy = @event.CreatedBy;
+        ProjectId = @event.ProjectId;
         CreatedDate = @event.CreatedDate;
     }
     
@@ -33,12 +36,12 @@ public class ProjectAggregate : AggregateRoot
     {
         if (!IsActive)
         {
-            throw new InvalidOperationException("You cannot edit deleted project!");
+            throw new InvalidOperationException("You cannot edit deleted epic!");
         }
         
         if(string.IsNullOrWhiteSpace(name))
         {
-            throw new InvalidOperationException("Project name cannot be empty.");
+            throw new InvalidOperationException("Epic name cannot be empty.");
         }
 
         if (string.Equals(name, Name, StringComparison.Ordinal))
@@ -46,24 +49,24 @@ public class ProjectAggregate : AggregateRoot
             throw new InvalidOperationException($"You cannot set the same name: {name}.");
         }
         
-        RaiseEvent(new ProjectUpdatedEvent
+        RaiseEvent(new EpicUpdatedEvent
         (
             Id: Id,
             FieldsChanged: new Dictionary<string, object> {{nameof(Name), name}} 
         ));
     }
     
-    public void Apply(ProjectUpdatedEvent @event)
+    public void Apply(EpicUpdatedEvent @event)
     {
         base.Apply(@event);
     }
     
-    public void DeleteProject()
+    public void DeleteEpic()
     {
-        RaiseEvent(new ProjectDeletedEvent(Id));
+        RaiseEvent(new EpicDeletedEvent(Id));
     }
     
-    public void Apply(ProjectDeletedEvent @event)
+    public void Apply(EpicDeletedEvent @event)
     {
         Id = @event.Id;
         IsActive = false;
