@@ -1,9 +1,13 @@
+using Common.Domain.Models;
+
 namespace Common.Events.Project;
 
-public record ProjectCreatedEvent(Guid Id, string Name, Guid CreatedBy) : DomainEvent(Id);
-    
-public record ProjectDeletedEvent(Guid Id) : DomainEvent(Id);
+public record ProjectCreatedEvent(Guid Id, string Name, Guid CreatedBy) : EntityCreatedEvent<ProjectAggregate>(Id);
 
-public record ProjectUpdatedEvent(Guid Id, string Title) : DomainEvent(Id);
+public record ProjectUpdatedEvent(Guid Id, IDictionary<string, object> FieldsChanged) 
+    : EntityUpdatedEvent<ProjectAggregate>(Id, FieldsChanged);
+
+public record ProjectDeletedEvent(Guid Id) : EntityDeletedEvent<ProjectAggregate>(Id);
+
 
 

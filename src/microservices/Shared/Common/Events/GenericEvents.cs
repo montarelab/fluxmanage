@@ -2,11 +2,12 @@ using Common.Domain;
 
 namespace Common.Events;
 
-public record EntityCreatedEvent<T>(T Entity) where T : IEntity;
+public abstract record EntityCreatedEvent<TEntity>(Guid Id) : DomainEvent<TEntity>(Id) 
+    where TEntity : IEntity;
 
-public record EntityDeletedEvent<T>(Guid Id) where T : IEntity;
+public abstract record EntityDeletedEvent<TEntity>(Guid Id) : DomainEvent<TEntity>(Id)
+    where TEntity : IEntity;
 
-public class EntityUpdatedEvent<T> where T : IEntity
-{
-    public IDictionary<string, object>? FieldsChanged { get; set; }
-}
+public abstract record EntityUpdatedEvent<TEntity>(
+    Guid Id,
+    IDictionary<string, object> FieldsChanged) : DomainEvent<TEntity>(Id) where TEntity : IEntity;

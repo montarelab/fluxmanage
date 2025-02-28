@@ -1,4 +1,5 @@
 using Common.Auth;
+using Common.Domain.Models;
 using Common.EventSourcing;
 using FastEndpoints;
 using FluentValidation;

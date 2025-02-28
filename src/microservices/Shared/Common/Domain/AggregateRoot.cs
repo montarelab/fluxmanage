@@ -1,3 +1,4 @@
+using System.Reflection;
 using Common.Events;
 
 namespace Common.Domain;
@@ -24,6 +25,19 @@ public abstract class AggregateRoot : IEntity
     public void MarkChangesAsCommitted()
     {
         _changes.Clear();
+    }
+
+    protected void Apply<T>(EntityUpdatedEvent<T> @event) where T : IEntity
+    {
+        Id = @event.Id;
+        foreach (var (fieldName, fieldValue) in @event.FieldsChanged)
+        {
+            var property = GetType().GetProperty(fieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (property != null && property.CanWrite)
+            {
+                property.SetValue(this, fieldValue);
+            }
+        }
     }
 
     /// <summary>

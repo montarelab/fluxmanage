@@ -1,9 +1,9 @@
-using Common.Domain;
-using Common.Events.Project;
+using System.Reflection;
+using Common.DTO;
 using Common.Events.Task;
-using TaskCommon.DTO;
+using TaskStatus = TaskCommon.Domain.TaskStatus;
 
-namespace TaskCommon.Domain;
+namespace Common.Domain.Models;
 
 public class TaskAggregate : AggregateRoot
 {
@@ -35,7 +35,7 @@ public class TaskAggregate : AggregateRoot
         ));
     }
     
-    public void Apply(TaskCreatedEvent @event)
+    private void Apply(TaskCreatedEvent @event)
     {
         IsActive = true;
         Id = @event.Id;
@@ -43,9 +43,7 @@ public class TaskAggregate : AggregateRoot
         ProjectId = @event.ProjectId;
         CreatedDate = @event.CreatedDate;
     }
-    
-    
-    // todo some complex model must be here
+
     public void Update(TaskUpdateData updatedData)
     {
         if (!IsActive)
@@ -55,14 +53,14 @@ public class TaskAggregate : AggregateRoot
         
         RaiseEvent(new TaskUpdatedEvent
         (
-            Id: Id
+            Id: Id,
+            updatedData.Changes
         ));
     }
     
-    public void Apply(TaskUpdatedEvent @event)
+    private void Apply(TaskUpdatedEvent @event)
     {
-        Id = @event.Id;
-        // todo further logic here
+        base.Apply(@event);
     }
     
     public void DeleteTask()
@@ -70,7 +68,7 @@ public class TaskAggregate : AggregateRoot
         RaiseEvent(new TaskDeletedEvent(Id));
     }
     
-    public void Apply(TaskDeletedEvent @event)
+    private void Apply(TaskDeletedEvent @event)
     {
         Id = @event.Id;
         IsActive = false;
@@ -81,7 +79,7 @@ public class TaskAggregate : AggregateRoot
         RaiseEvent(new TaskCompletedEvent(Id));
     }
     
-    public void Apply(TaskCompletedEvent @event)
+    private void Apply(TaskCompletedEvent @event)
     {
         Id = @event.Id;
         Status = TaskStatus.Completed;
@@ -92,7 +90,7 @@ public class TaskAggregate : AggregateRoot
         RaiseEvent(new TaskAssignedEvent(Id, assigneeId));
     }
     
-    public void Apply(TaskAssignedEvent @event)
+    private void Apply(TaskAssignedEvent @event)
     {
         Id = @event.Id;
         AssigneeId = @event.AssigneeId;

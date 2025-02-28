@@ -1,8 +1,9 @@
+using Common.Domain.Models;
+using Common.DTO;
 using Common.EventSourcing;
 using FastEndpoints;
 using FluentValidation;
 using TaskCommon.Domain;
-using TaskCommon.DTO;
 using TaskStatus = System.Threading.Tasks.TaskStatus;
 
 namespace TaskWrite.Tasks;

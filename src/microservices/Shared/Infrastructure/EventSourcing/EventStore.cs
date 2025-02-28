@@ -24,7 +24,7 @@ public class EventStore(IEventStoreRepository eventStoreRepository, IEventProduc
             var eventModel = new EventModel{
                 TimeStamp = DateTime.Now,
                 AggregateIdentifier = aggregateId,
-                AggregateType = @event.GetType().ToString(),
+                AggregateType = @event.AggregateType,
                 Version = version,
                 EventType = eventType,
                 EventData = @event

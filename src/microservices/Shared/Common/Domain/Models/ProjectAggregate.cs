@@ -1,7 +1,6 @@
-using Common.Domain;
 using Common.Events.Project;
 
-namespace TaskCommon.Domain;
+namespace Common.Domain.Models;
 
 public class ProjectAggregate : AggregateRoot
 {
@@ -50,13 +49,13 @@ public class ProjectAggregate : AggregateRoot
         RaiseEvent(new ProjectUpdatedEvent
         (
             Id: Id,
-            Title: name
+            FieldsChanged: new Dictionary<string, object> {{nameof(Name), name}} 
         ));
     }
     
     public void Apply(ProjectUpdatedEvent @event)
     {
-        Name = @event.Title;
+        base.Apply(@event);
     }
     
     public void DeleteProject()

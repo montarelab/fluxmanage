@@ -1,8 +1,17 @@
-namespace TaskCommon.DTO;
+namespace Common.DTO;
+
+public abstract record UpdateData 
+{
+    public IDictionary<string, object> Changes => GetType()
+            .GetProperties()
+            .Select(p => new { Field = p.Name, Value = p.GetValue(this) })
+            .Where(p => p.Value != null)
+            .ToDictionary(p => p.Field, p => p.Value!);        
+}
 
 public record ProjectDto();
 public record TaskDto();
-public abstract record TaskUpdateData
+public record TaskUpdateData : UpdateData
 {
     public Guid Id { get; init; }
     public string? Title { get; init; }
