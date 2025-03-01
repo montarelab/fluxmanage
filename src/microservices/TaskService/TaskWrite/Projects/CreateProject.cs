@@ -3,15 +3,13 @@ using Common.Domain.Models;
 using Common.EventSourcing;
 using FastEndpoints;
 using FluentValidation;
-using TaskCommon.Domain;
-using Auth = Common.Auth;
 
 namespace TaskWrite.Projects;
 
 public static class CreateProject
 {
     public record CreateProjectRequest(string Title);
-    public class CreateProjectResponse(Guid Id);
+    public record CreateProjectResponse(Guid Id);
 
     public class Validator : Validator<CreateProjectRequest>
     {
@@ -20,8 +18,8 @@ public static class CreateProject
             RuleFor(x => x.Title)
                 .NotEmpty()
                 .WithMessage("Title is required")
-                .MaximumLength(10)
-                .WithMessage("Title must be less than 10 characters");
+                .MaximumLength(20)
+                .WithMessage("Title must be less than 20 characters");
         }
     }
     
@@ -44,9 +42,9 @@ public static class CreateProject
                 id: Guid.NewGuid(),
                 name: req.Title,
                 createdBy: CurrentUserService.GetUserId());
-            
+
             await EventSourcingHandler.SaveAsync(project);
-            await SendAsync(new CreateProjectResponse(project.Id), cancellation: ct);
+            await SendOkAsync(new CreateProjectResponse(project.Id), ct);
         }
     }
 }

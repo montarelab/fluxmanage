@@ -33,7 +33,7 @@ builder.Services.Configure<ProducerConfig>(builder.Configuration.GetSection(name
 
 var assembly = Assembly.GetExecutingAssembly();
 
-builder.Services.AddEventSourcingInfrastructure();
+builder.Services.AddInfrastructure();
 builder.Services.AddValidatorsFromAssembly(assembly);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -45,6 +45,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseFastEndpoints();
 app.UseHttpsRedirection();
+app.UseInfrastructure();
 
 app.MapGet("/health", () => "Healthy");
 app.Run();

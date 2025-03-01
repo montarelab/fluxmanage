@@ -11,13 +11,15 @@ namespace TaskWrite.Tasks;
 public static class UpdateTask
 {
     public record UpdateTaskRequest : TaskUpdateData;
-    public class UpdateTaskResponse(Guid Id);
+    public record UpdateTaskResponse(Guid Id);
     public class Endpoint : Endpoint<UpdateTaskRequest, UpdateTaskResponse>
     {
-        private IEventSourcingHandler<TaskAggregate> EventSourcingHandler { get; set; } = null!;
+        public IEventSourcingHandler<TaskAggregate> EventSourcingHandler { get; set; } = null!;
         public override void Configure()
         {
             Put("/tasks");
+            AllowAnonymous();
+
             // todo introduce permissions
         }
 
@@ -26,7 +28,7 @@ public static class UpdateTask
             var task = (await EventSourcingHandler.GetByIdAsync(req.Id))!;
             task.Update(req);
             await EventSourcingHandler.SaveAsync(task);
-            await SendAsync(new UpdateTaskResponse(task.Id), cancellation: ct);
+            await SendOkAsync(new UpdateTaskResponse(task.Id), ct);
         }
     }
     

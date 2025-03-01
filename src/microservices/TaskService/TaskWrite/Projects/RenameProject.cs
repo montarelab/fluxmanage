@@ -2,14 +2,13 @@ using Common.Domain.Models;
 using Common.EventSourcing;
 using FastEndpoints;
 using FluentValidation;
-using TaskCommon.Domain;
 
 namespace TaskWrite.Projects;
 
 public static class RenameProject
 {
     public record RenameProjectRequest(Guid Id, string NewTitle);
-    public class RenameProjectResponse(Guid Id);
+    public record RenameProjectResponse(Guid Id);
     
     public class Validator : Validator<RenameProjectRequest>
     {
@@ -29,11 +28,12 @@ public static class RenameProject
     
     public class Endpoint : Endpoint<RenameProjectRequest, RenameProjectResponse>
     {
-        private IEventSourcingHandler<ProjectAggregate> EventSourcingHandler { get; set; } = null!;
+        public IEventSourcingHandler<ProjectAggregate> EventSourcingHandler { get; set; } = null!;
         
         public override void Configure()
         {
             Put("/projects");
+            AllowAnonymous();
             // todo introduce permissions
         }
 
@@ -42,7 +42,7 @@ public static class RenameProject
             var project = (await EventSourcingHandler.GetByIdAsync(req.Id))!;
             project.EditName(req.NewTitle);
             await EventSourcingHandler.SaveAsync(project);
-            await SendAsync(new RenameProjectResponse(project.Id), cancellation: ct);
+            await SendOkAsync(new RenameProjectResponse(project.Id), ct);
         }
     }
 }

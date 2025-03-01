@@ -8,7 +8,7 @@ namespace TaskWrite.Epic;
 public static class DeleteEpic
 {
     public record DeleteEpicRequest(Guid Id);
-    public class DeleteEpicResponse(Guid Id);
+    public record DeleteEpicResponse(Guid Id);
     
     public class Validator : Validator<DeleteEpicRequest>
     {
@@ -22,11 +22,12 @@ public static class DeleteEpic
     
     public class Endpoint : Endpoint<DeleteEpicRequest, DeleteEpicResponse>
     {
-        private IEventSourcingHandler<EpicAggregate> EventSourcingHandler { get; set; } = null!;
+        public IEventSourcingHandler<EpicAggregate> EventSourcingHandler { get; set; } = null!;
         
         public override void Configure()
         {
             Delete("/epics");
+            AllowAnonymous();
         }
 
         public override async Task HandleAsync(DeleteEpicRequest req, CancellationToken ct)
@@ -34,7 +35,7 @@ public static class DeleteEpic
             var epic = (await EventSourcingHandler.GetByIdAsync(req.Id))!;
             epic.DeleteEpic();
             await EventSourcingHandler.SaveAsync(epic);
-            await SendAsync(new DeleteEpicResponse(epic.Id), cancellation: ct);
+            await SendOkAsync(new DeleteEpicResponse(epic.Id), ct);
         }
     }
 }

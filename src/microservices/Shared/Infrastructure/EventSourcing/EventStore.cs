@@ -43,7 +43,7 @@ public class EventStore(IEventStoreRepository eventStoreRepository, IEventProduc
 
         if (eventStream == null || eventStream.Count == 0)
         {
-            throw new AggregateNotFoundException("Incorrect post Id provided! "+aggregateId);
+            throw new AggregateNotFoundException("Incorrect aggregate Id provided! "+aggregateId);
         }
 
         return eventStream

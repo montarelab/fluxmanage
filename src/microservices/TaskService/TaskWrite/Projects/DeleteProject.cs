@@ -9,7 +9,7 @@ namespace TaskWrite.Projects;
 public static class DeleteProject
 {
     public record DeleteProjectRequest(Guid Id);
-    public class DeleteProjectResponse(Guid Id);
+    public record DeleteProjectResponse(Guid Id);
     
     public class Validator : Validator<DeleteProjectRequest>
     {
@@ -23,11 +23,12 @@ public static class DeleteProject
     
     public class Endpoint : Endpoint<DeleteProjectRequest, DeleteProjectResponse>
     {
-        private IEventSourcingHandler<ProjectAggregate> EventSourcingHandler { get; set; } = null!;
+        public IEventSourcingHandler<ProjectAggregate> EventSourcingHandler { get; set; } = null!;
         
         public override void Configure()
         {
             Delete("/projects");
+            AllowAnonymous();
         }
 
         public override async Task HandleAsync(DeleteProjectRequest req, CancellationToken ct)
@@ -35,7 +36,7 @@ public static class DeleteProject
             var project = (await EventSourcingHandler.GetByIdAsync(req.Id))!;
             project.DeleteProject();
             await EventSourcingHandler.SaveAsync(project);
-            await SendAsync(new DeleteProjectResponse(project.Id), cancellation: ct);
+            await SendOkAsync(new DeleteProjectResponse(project.Id), ct);
         }
     }
 }

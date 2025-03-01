@@ -60,6 +60,11 @@ public class ProjectAggregate : AggregateRoot
     
     public void DeleteProject()
     {
+        if (!IsActive)
+        {
+            throw new InvalidOperationException("You cannot delete already deleted project!");
+        }
+        
         RaiseEvent(new ProjectDeletedEvent(Id));
     }
     

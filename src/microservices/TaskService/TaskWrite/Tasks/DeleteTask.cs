@@ -23,11 +23,13 @@ public static class DeleteTask
     
     public class Endpoint : Endpoint<DeleteTaskRequest, DeleteTaskResponse>
     {
-        private IEventSourcingHandler<TaskAggregate> EventSourcingHandler { get; set; } = null!;
+        public IEventSourcingHandler<TaskAggregate> EventSourcingHandler { get; set; } = null!;
         
         public override void Configure()
         {
             Delete("/tasks");
+            AllowAnonymous();
+
             // todo introduce permissions
         }
 
@@ -36,7 +38,7 @@ public static class DeleteTask
             var task = (await EventSourcingHandler.GetByIdAsync(req.Id))!;
             task.DeleteTask();
             await EventSourcingHandler.SaveAsync(task);
-            await SendAsync(new DeleteTaskResponse(task.Id), cancellation: ct);
+            await SendOkAsync(new DeleteTaskResponse(task.Id), ct);
         }
     }
 }

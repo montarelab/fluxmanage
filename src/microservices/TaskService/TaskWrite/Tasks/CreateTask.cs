@@ -30,12 +30,14 @@ public static class CreateTask
     
     public class Endpoint : Endpoint<CreateTaskRequest, CreateTaskResponse>
     {
-        private IEventSourcingHandler<TaskAggregate> EventSourcingHandler { get; set; } = null!;
-        private ICurrentUserService CurrentUserService { get; set; } = null!;
+        public IEventSourcingHandler<TaskAggregate> EventSourcingHandler { get; set; } = null!;
+        public ICurrentUserService CurrentUserService { get; set; } = null!;
         
         public override void Configure()
         {
             Post("/tasks");
+            AllowAnonymous();
+
             // todo introduce permissions
         }
 
@@ -48,7 +50,7 @@ public static class CreateTask
                 createdBy: CurrentUserService.GetUserId());
             
             await EventSourcingHandler.SaveAsync(task);
-            await SendAsync(new CreateTaskResponse(task.Id), cancellation: ct);
+            await SendOkAsync(new CreateTaskResponse(task.Id), ct);
         }
     }
 }

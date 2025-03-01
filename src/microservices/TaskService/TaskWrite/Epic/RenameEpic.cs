@@ -8,7 +8,7 @@ namespace TaskWrite.Epic;
 public static class RenameEpic
 {
     public record RenameEpicRequest(Guid Id, string NewTitle);
-    public class RenameEpicResponse(Guid Id);
+    public record RenameEpicResponse(Guid Id);
     
     public class Validator : Validator<RenameEpicRequest>
     {
@@ -28,11 +28,13 @@ public static class RenameEpic
     
     public class Endpoint : Endpoint<RenameEpicRequest, RenameEpicResponse>
     {
-        private IEventSourcingHandler<EpicAggregate> EventSourcingHandler { get; set; } = null!;
+        public IEventSourcingHandler<EpicAggregate> EventSourcingHandler { get; set; } = null!;
         
         public override void Configure()
         {
             Put("/epics");
+            AllowAnonymous();
+
             // todo introduce permissions
         }
 
@@ -41,7 +43,7 @@ public static class RenameEpic
             var epic = (await EventSourcingHandler.GetByIdAsync(req.Id))!;
             epic.EditName(req.NewTitle);
             await EventSourcingHandler.SaveAsync(epic);
-            await SendAsync(new RenameEpicResponse(epic.Id), cancellation: ct);
+            await SendOkAsync(new RenameEpicResponse(epic.Id), ct);
         }
     }
 }

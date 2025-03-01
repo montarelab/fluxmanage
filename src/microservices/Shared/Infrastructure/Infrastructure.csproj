@@ -12,8 +12,10 @@
 
     <ItemGroup>
       <PackageReference Include="Confluent.Kafka" Version="2.8.0" />
+      <PackageReference Include="FastEndpoints" Version="5.34.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0-preview.1.25080.5" />
       <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.0-preview.1.25080.5" />
     </ItemGroup>
-
+    
 </Project>

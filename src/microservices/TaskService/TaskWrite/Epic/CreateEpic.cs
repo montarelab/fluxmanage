@@ -9,7 +9,7 @@ namespace TaskWrite.Epic;
 public static class CreateEpic
 {
     public record CreateEpicRequest(Guid ProjectId, string Title);
-    public class CreateEpicResponse(Guid Id);
+    public record CreateEpicResponse(Guid Id);
 
     public class Validator : Validator<CreateEpicRequest>
     {
@@ -29,8 +29,8 @@ public static class CreateEpic
     
     public class Endpoint : Endpoint<CreateEpicRequest, CreateEpicResponse>
     {
-        private IEventSourcingHandler<EpicAggregate> EventSourcingHandler { get; set; } = null!;
-        private ICurrentUserService CurrentUserService { get; set; } = null!;
+        public IEventSourcingHandler<EpicAggregate> EventSourcingHandler { get; set; } = null!;
+        public ICurrentUserService CurrentUserService { get; set; } = null!;
         
         public override void Configure()
         {
@@ -49,7 +49,7 @@ public static class CreateEpic
                 createdBy: CurrentUserService.GetUserId());
             
             await EventSourcingHandler.SaveAsync(epic);
-            await SendAsync(new CreateEpicResponse(epic.Id), cancellation: ct);
+            await SendOkAsync(new CreateEpicResponse(epic.Id), ct);
         }
     }
 }
