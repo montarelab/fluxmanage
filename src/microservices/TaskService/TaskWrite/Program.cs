@@ -5,6 +5,7 @@ using FastEndpoints;
 using FluentValidation;
 using Infrastructure;
 using Infrastructure.Config;
+using Infrastructure.Swagger;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
@@ -36,13 +37,12 @@ var assembly = Assembly.GetExecutingAssembly();
 builder.Services.AddInfrastructure();
 builder.Services.AddValidatorsFromAssembly(assembly);
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwagger();
 builder.Services.AddFastEndpoints();
 
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUtils();
 app.UseFastEndpoints();
 app.UseHttpsRedirection();
 app.UseInfrastructure();

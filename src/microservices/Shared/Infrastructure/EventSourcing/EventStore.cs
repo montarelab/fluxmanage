@@ -39,6 +39,7 @@ public class EventStore(IEventStoreRepository eventStoreRepository, IEventProduc
 
     public async Task<List<DomainEvent>> GetEventsAsync(Guid aggregateId)
     {
+        Console.WriteLine("AggregateId: "+aggregateId);
         var eventStream = await eventStoreRepository.FindByAggregateId(aggregateId);
 
         if (eventStream == null || eventStream.Count == 0)

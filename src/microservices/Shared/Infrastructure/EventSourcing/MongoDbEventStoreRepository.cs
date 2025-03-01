@@ -3,6 +3,7 @@ using Common.EventSourcing;
 using Infrastructure.Config;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Infrastructure.EventSourcing;
@@ -28,8 +29,13 @@ public class MongoDbEventStoreRepository : IEventStoreRepository
 
     public async Task<List<EventModel>> FindByAggregateId(Guid aggregateId)
     {
+        var filter = Builders<EventModel>
+            .Filter.Eq("AggregateIdentifier", new BsonBinaryData(aggregateId, GuidRepresentation.Standard));
+       
+        // todo it's not a problem
+        
         return await _eventStoreCollection
-            .Find(x => x.AggregateIdentifier.Equals(aggregateId))
+            .Find(filter)
             .ToListAsync()
             .ConfigureAwait(false);
     }

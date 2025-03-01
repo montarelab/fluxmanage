@@ -16,6 +16,7 @@ public class EventSourcingHandler<TAggregateRoot>(
 
     public async Task<TAggregateRoot?> GetByIdAsync(Guid aggregateId)
     {
+        Console.WriteLine("AggregateId in Sourcing handler: "+aggregateId);
         var events = await eventStore.GetEventsAsync(aggregateId);
         if (events is not { Count: > 0 })
         {
