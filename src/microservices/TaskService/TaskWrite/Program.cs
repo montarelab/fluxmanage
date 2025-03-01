@@ -5,11 +5,9 @@ using FastEndpoints;
 using FluentValidation;
 using Infrastructure;
 using Infrastructure.Config;
-using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
-using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 

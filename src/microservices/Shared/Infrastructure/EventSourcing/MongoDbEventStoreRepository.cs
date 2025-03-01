@@ -17,7 +17,6 @@ public class MongoDbEventStoreRepository : IEventStoreRepository
         _logger = logger;
         var mongoClient = new MongoClient(config.Value.ConnectionString);
         var mongoDatabase = mongoClient.GetDatabase(config.Value.Database);
-
         _eventStoreCollection = mongoDatabase.GetCollection<EventModel>(config.Value.Collection);
     }
 
