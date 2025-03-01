@@ -4,7 +4,7 @@ namespace Common.Domain.Models;
 
 public class EpicAggregate : AggregateRoot
 {
-    private string Name { get; set; } = string.Empty;
+    private string Title { get; set; } = string.Empty;
     private Guid CreatedBy { get; set; } = Guid.Empty;
     private Guid ProjectId { get; set; }
     private DateTime CreatedDate { get; set; } = DateTime.Now;
@@ -22,51 +22,56 @@ public class EpicAggregate : AggregateRoot
         ));
     }
     
-    public void Apply(EpicCreatedEvent @event)
+    protected void Apply(EpicCreatedEvent @event)
     {
         IsActive = true;
         Id = @event.Id;
-        Name = @event.Name;
+        Title = @event.Name;
         CreatedBy = @event.CreatedBy;
         ProjectId = @event.ProjectId;
-        CreatedDate = @event.CreatedDate;
+        CreatedDate = @event.TriggeredOn;
     }
     
-    public void EditName(string name)
+    public void EditName(string title)
     {
         if (!IsActive)
         {
             throw new InvalidOperationException("You cannot edit deleted epic!");
         }
         
-        if(string.IsNullOrWhiteSpace(name))
+        if(string.IsNullOrWhiteSpace(title))
         {
             throw new InvalidOperationException("Epic name cannot be empty.");
         }
 
-        if (string.Equals(name, Name, StringComparison.Ordinal))
+        if (string.Equals(title, Title, StringComparison.Ordinal))
         {
-            throw new InvalidOperationException($"You cannot set the same name: {name}.");
+            throw new InvalidOperationException($"You cannot set the same name: {title}.");
         }
         
         RaiseEvent(new EpicUpdatedEvent
         (
             Id: Id,
-            FieldsChanged: new Dictionary<string, object> {{nameof(Name), name}} 
+            Title: title 
         ));
     }
     
-    public void Apply(EpicUpdatedEvent @event)
+    protected void Apply(EpicUpdatedEvent @event)
     {
         base.Apply(@event);
     }
     
     public void DeleteEpic()
     {
+        if (!IsActive)
+        {
+            throw new InvalidOperationException("You cannot delete already deleted epic!");
+        }
+        
         RaiseEvent(new EpicDeletedEvent(Id));
     }
     
-    public void Apply(EpicDeletedEvent @event)
+    protected void Apply(EpicDeletedEvent @event)
     {
         Id = @event.Id;
         IsActive = false;

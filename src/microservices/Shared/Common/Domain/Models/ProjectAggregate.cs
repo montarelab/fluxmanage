@@ -4,7 +4,7 @@ namespace Common.Domain.Models;
 
 public class ProjectAggregate : AggregateRoot
 {
-    private string Name { get; set; } = string.Empty;
+    private string Title { get; set; } = string.Empty;
     private Guid CreatedBy { get; set; } = Guid.Empty;
     private DateTime CreatedDate { get; set; } = DateTime.Now;
     
@@ -20,40 +20,40 @@ public class ProjectAggregate : AggregateRoot
         ));
     }
     
-    public void Apply(ProjectCreatedEvent @event)
+    protected void Apply(ProjectCreatedEvent @event)
     {
         IsActive = true;
         Id = @event.Id;
-        Name = @event.Name;
+        Title = @event.Name;
         CreatedBy = @event.CreatedBy;
-        CreatedDate = @event.CreatedDate;
+        CreatedDate = @event.TriggeredOn;
     }
     
-    public void EditName(string name)
+    public void EditName(string title)
     {
         if (!IsActive)
         {
             throw new InvalidOperationException("You cannot edit deleted project!");
         }
         
-        if(string.IsNullOrWhiteSpace(name))
+        if(string.IsNullOrWhiteSpace(title))
         {
             throw new InvalidOperationException("Project name cannot be empty.");
         }
 
-        if (string.Equals(name, Name, StringComparison.Ordinal))
+        if (string.Equals(title, Title, StringComparison.Ordinal))
         {
-            throw new InvalidOperationException($"You cannot set the same name: {name}.");
+            throw new InvalidOperationException($"You cannot set the same name: {title}.");
         }
         
         RaiseEvent(new ProjectUpdatedEvent
         (
             Id: Id,
-            FieldsChanged: new Dictionary<string, object> {{nameof(Name), name}} 
+            Title: title
         ));
     }
     
-    public void Apply(ProjectUpdatedEvent @event)
+    protected void Apply(ProjectUpdatedEvent @event)
     {
         base.Apply(@event);
     }
@@ -68,7 +68,7 @@ public class ProjectAggregate : AggregateRoot
         RaiseEvent(new ProjectDeletedEvent(Id));
     }
     
-    public void Apply(ProjectDeletedEvent @event)
+    protected void Apply(ProjectDeletedEvent @event)
     {
         Id = @event.Id;
         IsActive = false;

@@ -14,6 +14,7 @@ public class ExceptionMiddleware : IMiddleware
         catch (Exception ex)
         {
             await HandleExceptionAsync(context, ex);
+            throw;
         }
     }
 

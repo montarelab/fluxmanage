@@ -1,17 +1,8 @@
+using TaskStatus = Common.Domain.Models.TaskStatus;
+
 namespace Common.DTO;
 
-public abstract record UpdateData 
-{
-    public IDictionary<string, object> Changes => GetType()
-            .GetProperties()
-            .Select(p => new { Field = p.Name, Value = p.GetValue(this) })
-            .Where(p => p.Value != null)
-            .ToDictionary(p => p.Field, p => p.Value!);        
-}
-
-public record ProjectDto();
-public record TaskDto();
-public record TaskUpdateData : UpdateData
+public record TaskUpdateData
 {
     public Guid Id { get; init; }
     public string? Title { get; init; }

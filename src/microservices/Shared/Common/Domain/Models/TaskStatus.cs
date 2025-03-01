@@ -1,4 +1,4 @@
-namespace TaskCommon.Domain;
+namespace Common.Domain.Models;
 
 public enum TaskStatus
 {

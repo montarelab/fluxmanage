@@ -1,35 +1,17 @@
 using System.Reflection;
-using Common.Events.Models;
 using Confluent.Kafka;
 using FastEndpoints;
 using FluentValidation;
 using Infrastructure;
-using Infrastructure.Config;
+using Infrastructure.MongoDb;
 using Infrastructure.Swagger;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var configPath = Environment.GetEnvironmentVariable("APP_CONFIG_PATH");
 builder.Configuration.AddJsonFile(configPath!, optional: false, reloadOnChange: true);
+builder.Services.AddMongoDb(builder.Configuration);
 
-BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
-BsonClassMap.RegisterClassMap<ProjectCreatedEvent>();
-BsonClassMap.RegisterClassMap<ProjectUpdatedEvent>();
-BsonClassMap.RegisterClassMap<ProjectDeletedEvent>();
-
-BsonClassMap.RegisterClassMap<TaskCreatedEvent>();
-BsonClassMap.RegisterClassMap<TaskDeletedEvent>();
-BsonClassMap.RegisterClassMap<TaskUpdatedEvent>();
-
-BsonClassMap.RegisterClassMap<EpicCreatedEvent>();
-BsonClassMap.RegisterClassMap<EpicUpdatedEvent>();
-BsonClassMap.RegisterClassMap<EpicDeletedEvent>();
-
-// add configs
-builder.Services.Configure<MongoDbConfig>(builder.Configuration.GetSection(nameof(MongoDbConfig)));
 builder.Services.Configure<ProducerConfig>(builder.Configuration.GetSection(nameof(ProducerConfig)));
 
 var assembly = Assembly.GetExecutingAssembly();

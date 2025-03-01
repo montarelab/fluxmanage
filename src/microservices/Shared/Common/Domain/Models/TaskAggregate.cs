@@ -1,7 +1,5 @@
-using System.Reflection;
 using Common.DTO;
 using Common.Events.Models;
-using TaskStatus = TaskCommon.Domain.TaskStatus;
 
 namespace Common.Domain.Models;
 
@@ -35,13 +33,14 @@ public class TaskAggregate : AggregateRoot
         ));
     }
     
-    private void Apply(TaskCreatedEvent @event)
+    protected void Apply(TaskCreatedEvent @event)
     {
         IsActive = true;
         Id = @event.Id;
         Title = @event.Title;
         ProjectId = @event.ProjectId;
-        CreatedDate = @event.CreatedDate;
+        CreatedBy = @event.CreatedBy;
+        CreatedDate = @event.TriggeredOn;
     }
 
     public void Update(TaskUpdateData updatedData)
@@ -51,24 +50,36 @@ public class TaskAggregate : AggregateRoot
             throw new InvalidOperationException("You cannot edit deleted task!");
         }
         
-        RaiseEvent(new TaskUpdatedEvent
-        (
-            Id: Id,
-            updatedData.Changes
-        ));
+        RaiseEvent(new TaskUpdatedEvent(
+            updatedData.Id,
+            updatedData.Title,
+            updatedData.Description,
+            updatedData.StartDate,
+            updatedData.DueDate,
+            updatedData.AssigneeId,
+            updatedData.ParentTaskId,
+            updatedData.EpicId,
+            updatedData.EstimatedStoryPoints,
+            updatedData.Status,
+            updatedData.CustomFields));
     }
     
-    private void Apply(TaskUpdatedEvent @event)
+    protected void Apply(TaskUpdatedEvent @event)
     {
         base.Apply(@event);
     }
     
     public void DeleteTask()
     {
+        if (!IsActive)
+        {
+            throw new InvalidOperationException("You cannot delete already deleted task!");
+        }
+        
         RaiseEvent(new TaskDeletedEvent(Id));
     }
     
-    private void Apply(TaskDeletedEvent @event)
+    protected void Apply(TaskDeletedEvent @event)
     {
         Id = @event.Id;
         IsActive = false;
@@ -79,7 +90,7 @@ public class TaskAggregate : AggregateRoot
         RaiseEvent(new TaskCompletedEvent(Id));
     }
     
-    private void Apply(TaskCompletedEvent @event)
+    protected void Apply(TaskCompletedEvent @event)
     {
         Id = @event.Id;
         Status = TaskStatus.Completed;
@@ -90,7 +101,7 @@ public class TaskAggregate : AggregateRoot
         RaiseEvent(new TaskAssignedEvent(Id, assigneeId));
     }
     
-    private void Apply(TaskAssignedEvent @event)
+    protected void Apply(TaskAssignedEvent @event)
     {
         Id = @event.Id;
         AssigneeId = @event.AssigneeId;

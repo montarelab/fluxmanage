@@ -22,8 +22,8 @@ public static class CreateEpic
             RuleFor(x => x.Title)
                 .NotEmpty()
                 .WithMessage("Title is required")
-                .MaximumLength(10)
-                .WithMessage("Title must be less than 10 characters");
+                .MaximumLength(20)
+                .WithMessage("Title must be less than 20 characters");
         }
     }
     

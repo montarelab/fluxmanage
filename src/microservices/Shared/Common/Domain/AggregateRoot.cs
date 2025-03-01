@@ -29,13 +29,19 @@ public abstract class AggregateRoot : IEntity
 
     protected void Apply<T>(EntityUpdatedEvent<T> @event) where T : IEntity
     {
-        Id = @event.Id;
-        foreach (var (fieldName, fieldValue) in @event.FieldsChanged)
+        foreach (var eventProperty in @event.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
         {
-            var property = GetType().GetProperty(fieldName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            if (property != null && property.CanWrite)
+            var entityProperty = GetType().GetProperty(eventProperty.Name, 
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+            if (entityProperty != null && entityProperty.CanWrite)
             {
-                property.SetValue(this, fieldValue);
+                var value = eventProperty.GetValue(@event); 
+                var convertedValue = value != null 
+                    ? Convert.ChangeType(value, entityProperty.PropertyType) 
+                    : null;
+
+                entityProperty.SetValue(this, convertedValue);
             }
         }
     }
@@ -48,17 +54,27 @@ public abstract class AggregateRoot : IEntity
     /// <param name="event"></param>
     /// <param name="isNew"></param>
     /// <exception cref="ArgumentNullException"></exception>
-    private void ApplyChange(DomainEvent @event, bool isNew)
+    protected void ApplyChange(DomainEvent @event, bool isNew)
     {
-        var method = GetType().GetMethod("Apply", [@event.GetType()]);
+        var method = GetType().GetMethod(
+            nameof(Apply), 
+            BindingFlags.Instance | BindingFlags.NonPublic, 
+            null,  
+            [@event.GetType()], 
+            null);
 
         if (method is null)
+        {
             throw new ArgumentNullException(nameof(method),
                 $"The Apply method was not found in the aggregate for {@event.GetType().Name}");
+        }
 
         method.Invoke(this, [@event]);
 
-        if (isNew) _changes.Add(@event);
+        if (isNew)
+        {
+            _changes.Add(@event);
+        }
     }
 
     /// <summary>

@@ -8,6 +8,5 @@ public abstract record EntityCreatedEvent<TEntity>(Guid Id) : DomainEvent<TEntit
 public abstract record EntityDeletedEvent<TEntity>(Guid Id) : DomainEvent<TEntity>(Id)
     where TEntity : IEntity;
 
-public abstract record EntityUpdatedEvent<TEntity>(
-    Guid Id,
-    IDictionary<string, object> FieldsChanged) : DomainEvent<TEntity>(Id) where TEntity : IEntity;
+public abstract record EntityUpdatedEvent<TEntity>(Guid Id) : DomainEvent<TEntity>(Id) 
+    where TEntity : IEntity;

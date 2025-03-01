@@ -4,7 +4,7 @@ namespace Common.Events;
 
 public abstract record DomainEvent(Guid Id) 
 {
-    public DateTime CreatedDate { get; init; } = DateTime.Now;
+    public DateTime TriggeredOn { get; } = DateTime.Now;
     public int Version { get; init; }
     public abstract string AggregateType { get; }
     public abstract string EventType { get; }

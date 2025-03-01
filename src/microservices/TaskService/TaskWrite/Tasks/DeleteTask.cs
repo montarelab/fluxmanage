@@ -1,8 +1,6 @@
 using Common.Domain.Models;
 using Common.EventSourcing;
 using FastEndpoints;
-using FluentValidation;
-using TaskCommon.Domain;
 
 namespace TaskWrite.Tasks;
 

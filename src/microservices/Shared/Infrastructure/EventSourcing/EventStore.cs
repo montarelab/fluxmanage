@@ -19,21 +19,21 @@ public class EventStore(IEventStoreRepository eventStoreRepository, IEventProduc
         foreach (var @event in events)
         {
             version++;
-            string eventType = @event.GetType().Name;
+            var versionedEvent = @event with { Version = version };
 
             var eventModel = new EventModel{
                 TimeStamp = DateTime.Now,
                 AggregateIdentifier = aggregateId,
                 AggregateType = @event.AggregateType,
                 Version = version,
-                EventType = eventType,
-                EventData = @event
+                EventType = @event.EventType,
+                EventData = versionedEvent
             };
 			
             await eventStoreRepository.SaveAsync(eventModel);
 
             string topic = Environment.GetEnvironmentVariable("KAFKA_TOPIC")!;
-            await eventProducer.ProduceAsync(topic!, @event with { Version = version });
+            await eventProducer.ProduceAsync(topic, versionedEvent);
         }
     }
 
