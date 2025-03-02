@@ -11,7 +11,7 @@ public static class DependencyInjection
         return services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "Write Task Api", Version = "v1" });
-            c.OperationFilter<DeleteQueryParameterOperationFilter>();
+            // c.OperationFilter<DeleteQueryParameterOperationFilter>();
         });
     }
     

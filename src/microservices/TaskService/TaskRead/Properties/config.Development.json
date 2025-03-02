@@ -1,0 +1,20 @@
+﻿{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "MongoDbConfig": {
+    "ConnectionString": "mongodb://mongo:27017",
+    "Database": "TaskWriteDb",
+    "Collection": "eventStore"
+  },
+  "ConsumerConfig": {
+    "BootstrapServers": "kafka:9092",
+    "GroupId": "FM_Consumer",
+    "EnableAutoCommit": false,
+    "AutoOffsetReset": "Earliest",
+    "AllowAutoCreateTopics": true
+  }
+}

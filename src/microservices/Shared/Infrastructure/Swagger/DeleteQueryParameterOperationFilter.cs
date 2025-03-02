@@ -7,13 +7,11 @@ public class DeleteQueryParameterOperationFilter : IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        if (context.ApiDescription.HttpMethod != "DELETE") return;
-
         operation.Parameters.Add(new OpenApiParameter
         {
             Name = "id",
             In = ParameterLocation.Path,
-            Required = true,
+            Required = false,
             Schema = new OpenApiSchema { Type = "string", Format = "uuid" }
         });
     }

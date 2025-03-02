@@ -1,44 +1,34 @@
+using System.Reflection;
+using Confluent.Kafka;
+using FastEndpoints;
+using FastEndpoints.Swagger;
+using FluentValidation;
+using Infrastructure;
+using Infrastructure.MongoDb;
+using Infrastructure.Swagger;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+var configPath = Environment.GetEnvironmentVariable("APP_CONFIG_PATH");
+builder.Configuration.AddJsonFile(configPath!, optional: false, reloadOnChange: true);
+builder.Services.AddMongoDb(builder.Configuration);
+
+builder.Services.Configure<ProducerConfig>(builder.Configuration.GetSection(nameof(ProducerConfig)));
+
+var assembly = Assembly.GetExecutingAssembly();
+
+builder.Services.AddInfrastructure();
+builder.Services.AddValidatorsFromAssembly(assembly);
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwagger();
+builder.Services.AddFastEndpoints().SwaggerDocument();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+app.UseSwaggerUtils();
+app.UseFastEndpoints();
 app.UseHttpsRedirection();
+app.UseInfrastructure();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
+app.MapGet("/health", () => "Healthy");
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

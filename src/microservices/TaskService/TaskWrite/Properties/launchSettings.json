@@ -18,7 +18,8 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_URLS": "http://+:6001",
-        "APP_CONFIG_PATH": "config.Development.json"
+        "APP_CONFIG_PATH": "config.Development.json",
+        "KAFKA_TOPIC": "FluxManageEvents"
       }
     },
     "https": {
