@@ -29,9 +29,5 @@
     <ProjectReference Include="..\..\Shared\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="KafkaConsumer\" />
-  </ItemGroup>
-
   
 </Project>
