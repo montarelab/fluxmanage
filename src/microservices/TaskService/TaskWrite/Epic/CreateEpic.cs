@@ -1,8 +1,9 @@
 using Common.Auth;
-using Common.Domain.Models;
+using Common.Domain.Aggregates;
 using Common.EventSourcing;
 using FastEndpoints;
 using FluentValidation;
+using Task = System.Threading.Tasks.Task;
 
 namespace TaskWrite.Epic;
 
@@ -16,7 +17,7 @@ public static class CreateEpic
         public Validator(IEventSourcingHandler<ProjectAggregate> eventSourcingHandler)
         {
             RuleFor(x => x.ProjectId)
-                .MustAsync(async (id, _) => await eventSourcingHandler.GetByIdAsync(id) != null)
+                .MustAsync(async (id, _) => await eventSourcingHandler.GetAggregateByIdAsync(id) != null)
                 .WithMessage((_, id) => $"Project by id {id} not found");
             
             RuleFor(x => x.Title)
@@ -48,8 +49,8 @@ public static class CreateEpic
                 name: req.Title,
                 createdBy: CurrentUserService.GetUserId());
             
-            await EventSourcingHandler.SaveAsync(epic);
-            await SendOkAsync(new CreateEpicResponse(epic.Id), ct);
+            await EventSourcingHandler.SaveAggregateAsync(epic);
+            await SendOkAsync(new CreateEpicResponse(epic.Entity.Id), ct);
         }
     }
 }

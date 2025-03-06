@@ -6,18 +6,18 @@ namespace Infrastructure.EventSourcing;
 
 public class EventSourcingHandler<TAggregateRoot>(
     IEventStore eventStore
-) : IEventSourcingHandler<TAggregateRoot> where TAggregateRoot : AggregateRoot, new()
+) : IEventSourcingHandler<TAggregateRoot> where TAggregateRoot : class, IAggregateRoot, new()
 {
-    public async Task SaveAsync(TAggregateRoot aggregateRoot)
+    public async Task SaveAggregateAsync(TAggregateRoot aggregateRoot)
     {
         await eventStore.SaveEventsAsync(aggregateRoot.Id, aggregateRoot.GetUncommittedChanges(), aggregateRoot.Version);
         aggregateRoot.MarkChangesAsCommitted();
     }
 
-    public async Task<TAggregateRoot?> GetByIdAsync(Guid aggregateId)
+    public async Task<TAggregateRoot?> GetAggregateByIdAsync(Guid aggregateId)
     {
         Console.WriteLine("AggregateId in Sourcing handler: "+aggregateId);
-        var events = await eventStore.GetEventsAsync(aggregateId);
+        var events = await eventStore.GetEventsByAggregateIdAsync(aggregateId);
         if (events is not { Count: > 0 })
         {
             return null;

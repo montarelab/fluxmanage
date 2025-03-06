@@ -1,8 +1,9 @@
 using Common.Auth;
-using Common.Domain.Models;
+using Common.Domain.Aggregates;
 using Common.EventSourcing;
 using FastEndpoints;
 using FluentValidation;
+using Task = System.Threading.Tasks.Task;
 
 namespace TaskWrite.Projects;
 
@@ -43,8 +44,8 @@ public static class CreateProject
                 name: req.Title,
                 createdBy: CurrentUserService.GetUserId());
 
-            await EventSourcingHandler.SaveAsync(project);
-            await SendOkAsync(new CreateProjectResponse(project.Id), ct);
+            await EventSourcingHandler.SaveAggregateAsync(project);
+            await SendOkAsync(new CreateProjectResponse(project.Entity.Id), ct);
         }
     }
 }

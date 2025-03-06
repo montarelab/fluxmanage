@@ -1,8 +1,9 @@
 using Common.Auth;
-using Common.Domain.Models;
+using Common.Domain.Aggregates;
 using Common.EventSourcing;
 using FastEndpoints;
 using FluentValidation;
+using Task = System.Threading.Tasks.Task;
 
 namespace TaskWrite.Tasks;
 
@@ -22,7 +23,7 @@ public static class CreateTask
                 .WithMessage("Title must be less than 20 characters");
             
             RuleFor(x => x.ProjectId)
-                .MustAsync(async (id, _) => await eventSourcingHandler.GetByIdAsync(id) != null)
+                .MustAsync(async (id, _) => await eventSourcingHandler.GetAggregateByIdAsync(id) != null)
                 .WithMessage((_, id) => $"Project by id {id} not found");
         }
     }
@@ -48,8 +49,8 @@ public static class CreateTask
                 title: req.Title,
                 createdBy: CurrentUserService.GetUserId());
             
-            await EventSourcingHandler.SaveAsync(task);
-            await SendOkAsync(new CreateTaskResponse(task.Id), ct);
+            await EventSourcingHandler.SaveAggregateAsync(task);
+            await SendOkAsync(new CreateTaskResponse(task.Entity.Id), ct);
         }
     }
 }

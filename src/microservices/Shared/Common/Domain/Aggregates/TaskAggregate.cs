@@ -1,25 +1,11 @@
 using Common.DTO;
 using Common.Events.Models;
+using TaskStatus = Common.Domain.Entities.TaskStatus;
+using Task = Common.Domain.Entities.Task;
+namespace Common.Domain.Aggregates;
 
-namespace Common.Domain.Models;
-
-public class TaskAggregate : AggregateRoot
+public class TaskAggregate : IEntity<Task>
 {
-    private string Title { get; set; } = string.Empty;
-    private string Description { get; set; } = string.Empty;
-    private Guid CreatedBy { get; set; } = Guid.Empty;
-    private Guid? EpicId { get; set; } 
-    private Guid? ParentTaskId { get; set; }
-    private int EstimatedStoryPoints { get; set; } = 0;
-    private DateTime CreatedDate { get; set; } = DateTime.Now;
-    private DateTime StartDate { get; set; } = DateTime.Now; 
-    private DateTime DueDate { get; set; } = DateTime.Now.AddDays(7);
-    private IDictionary<string, string>? CustomFields { get; set; }
-    
-    private Guid AssigneeId { get; set; }
-    public Guid ProjectId { get; set; }
-    public TaskStatus Status { get; set; } = TaskStatus.Created;
-    
     public TaskAggregate() { }
 
     public TaskAggregate(Guid id, Guid projectId, string title, Guid createdBy)
@@ -36,11 +22,12 @@ public class TaskAggregate : AggregateRoot
     protected void Apply(TaskCreatedEvent @event)
     {
         IsActive = true;
+        Entity.Id = @event.Id;
         Id = @event.Id;
-        Title = @event.Title;
-        ProjectId = @event.ProjectId;
-        CreatedBy = @event.CreatedBy;
-        CreatedDate = @event.TriggeredOn;
+        Entity.Title = @event.Title;
+        Entity.ProjectId = @event.ProjectId;
+        Entity.CreatedBy = @event.CreatedBy;
+        Entity.CreatedDate = @event.TriggeredOn;
     }
 
     public void Update(TaskUpdateData updatedData)
@@ -76,34 +63,35 @@ public class TaskAggregate : AggregateRoot
             throw new InvalidOperationException("You cannot delete already deleted task!");
         }
         
-        RaiseEvent(new TaskDeletedEvent(Id));
+        RaiseEvent(new TaskDeletedEvent(Entity.Id));
     }
     
     protected void Apply(TaskDeletedEvent @event)
     {
-        Id = @event.Id;
+        Entity.Id = @event.Id;
         IsActive = false;
     }
     
     public void CompleteTask()
     {
-        RaiseEvent(new TaskCompletedEvent(Id));
+        RaiseEvent(new TaskCompletedEvent(Entity.Id));
     }
     
     protected void Apply(TaskCompletedEvent @event)
     {
-        Id = @event.Id;
-        Status = TaskStatus.Completed;
+        Entity.Id = @event.Id;
+        Entity.Status = TaskStatus.Completed;
     }
     
     public void AssignTask(Guid assigneeId)
     {
-        RaiseEvent(new TaskAssignedEvent(Id, assigneeId));
+        RaiseEvent(new TaskAssignedEvent(Entity.Id, assigneeId));
     }
     
     protected void Apply(TaskAssignedEvent @event)
     {
+        Entity.Id = @event.Id;
         Id = @event.Id;
-        AssigneeId = @event.AssigneeId;
+        Entity.AssigneeId = @event.AssigneeId;
     }
 }

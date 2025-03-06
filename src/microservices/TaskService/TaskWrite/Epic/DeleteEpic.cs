@@ -1,7 +1,8 @@
-using Common.Domain.Models;
+using Common.Domain.Aggregates;
 using Common.EventSourcing;
 using FastEndpoints;
 using FluentValidation;
+using Task = System.Threading.Tasks.Task;
 
 namespace TaskWrite.Epic;
 
@@ -22,10 +23,10 @@ public static class DeleteEpic
         public override async Task HandleAsync(CancellationToken ct)
         {
             var id = Route<Guid>("id");
-            var epic = (await EventSourcingHandler.GetByIdAsync(id))!;
+            var epic = (await EventSourcingHandler.GetAggregateByIdAsync(id))!;
             epic.DeleteEpic();
-            await EventSourcingHandler.SaveAsync(epic);
-            await SendOkAsync(new DeleteEpicResponse(epic.Id), ct);
+            await EventSourcingHandler.SaveAggregateAsync(epic);
+            await SendOkAsync(new DeleteEpicResponse(epic.Entity.Id), ct);
         }
     }
 }

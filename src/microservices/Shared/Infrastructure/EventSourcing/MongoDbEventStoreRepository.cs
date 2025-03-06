@@ -27,7 +27,7 @@ public class MongoDbEventStoreRepository : IEventStoreRepository
         _logger.LogInformation($"Event with Id {@event.Id} was saved to the event store");
     }
 
-    public async Task<List<EventModel>> FindByAggregateId(Guid aggregateId)
+    public async Task<List<EventModel>> FindEventsByAggregateId(Guid aggregateId)
     {
         var filter = Builders<EventModel>
             .Filter.Eq("AggregateIdentifier", new BsonBinaryData(aggregateId, GuidRepresentation.Standard));
@@ -40,7 +40,7 @@ public class MongoDbEventStoreRepository : IEventStoreRepository
             .ConfigureAwait(false);
     }
 
-    public async Task<List<EventModel>> FindAllAsync()
+    public async Task<List<EventModel>> FindAllEventsAsync()
     {
         return await _eventStoreCollection
             .Find(_ => true)

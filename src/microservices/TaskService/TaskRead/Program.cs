@@ -1,4 +1,5 @@
 using System.Reflection;
+using Common.Domain.Entities;
 using Confluent.Kafka;
 using FastEndpoints;
 using FastEndpoints.Swagger;
@@ -6,6 +7,8 @@ using FluentValidation;
 using Infrastructure;
 using Infrastructure.MongoDb;
 using Infrastructure.Swagger;
+using TaskRead.Services;
+using Task = Common.Domain.Entities.Task;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +19,10 @@ builder.Services.AddMongoDb(builder.Configuration);
 builder.Services.Configure<ProducerConfig>(builder.Configuration.GetSection(nameof(ProducerConfig)));
 
 var assembly = Assembly.GetExecutingAssembly();
+
+builder.Services.AddScoped<IRepository<Task>, TaskMongoRepository>();
+builder.Services.AddScoped<IRepository<Epic>, EpicMongoRepository>();
+builder.Services.AddScoped<IRepository<Project>, ProjectMongoRepository>();
 
 builder.Services.AddInfrastructure();
 builder.Services.AddValidatorsFromAssembly(assembly);

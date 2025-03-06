@@ -1,13 +1,10 @@
+using Common.Domain.Entities;
 using Common.Events.Models;
 
-namespace Common.Domain.Models;
+namespace Common.Domain.Aggregates;
 
-public class ProjectAggregate : AggregateRoot
+public class ProjectAggregate : IEntity<Project>
 {
-    private string Title { get; set; } = string.Empty;
-    private Guid CreatedBy { get; set; } = Guid.Empty;
-    private DateTime CreatedDate { get; set; } = DateTime.Now;
-    
     public ProjectAggregate() { }
 
     public ProjectAggregate(Guid id, string name, Guid createdBy)
@@ -23,10 +20,11 @@ public class ProjectAggregate : AggregateRoot
     protected void Apply(ProjectCreatedEvent @event)
     {
         IsActive = true;
+        Entity.Id = @event.Id;
         Id = @event.Id;
-        Title = @event.Name;
-        CreatedBy = @event.CreatedBy;
-        CreatedDate = @event.TriggeredOn;
+        Entity.Title = @event.Name;
+        Entity.CreatedBy = @event.CreatedBy;
+        Entity.CreatedDate = @event.TriggeredOn;
     }
     
     public void EditName(string title)
@@ -41,14 +39,14 @@ public class ProjectAggregate : AggregateRoot
             throw new InvalidOperationException("Project name cannot be empty.");
         }
 
-        if (string.Equals(title, Title, StringComparison.Ordinal))
+        if (string.Equals(title, Entity.Title, StringComparison.Ordinal))
         {
             throw new InvalidOperationException($"You cannot set the same name: {title}.");
         }
         
         RaiseEvent(new ProjectUpdatedEvent
         (
-            Id: Id,
+            Id: Entity.Id,
             Title: title
         ));
     }
@@ -65,11 +63,12 @@ public class ProjectAggregate : AggregateRoot
             throw new InvalidOperationException("You cannot delete already deleted project!");
         }
         
-        RaiseEvent(new ProjectDeletedEvent(Id));
+        RaiseEvent(new ProjectDeletedEvent(Entity.Id));
     }
     
     protected void Apply(ProjectDeletedEvent @event)
     {
+        Entity.Id = @event.Id;
         Id = @event.Id;
         IsActive = false;
     }

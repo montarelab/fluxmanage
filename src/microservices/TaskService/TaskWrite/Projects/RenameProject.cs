@@ -1,7 +1,8 @@
-using Common.Domain.Models;
+using Common.Domain.Aggregates;
 using Common.EventSourcing;
 using FastEndpoints;
 using FluentValidation;
+using Task = System.Threading.Tasks.Task;
 
 namespace TaskWrite.Projects;
 
@@ -15,7 +16,7 @@ public static class RenameProject
         public Validator(IEventSourcingHandler<ProjectAggregate> eventSourcingHandler)
         {
             RuleFor(x => x.Id)
-                .MustAsync(async (id, _) => await eventSourcingHandler.GetByIdAsync(id) != null)
+                .MustAsync(async (id, _) => await eventSourcingHandler.GetAggregateByIdAsync(id) != null)
                 .WithMessage((_, id) => $"Project by id {id} not found");
             
             RuleFor(x => x.NewTitle)
@@ -39,10 +40,10 @@ public static class RenameProject
 
         public override async Task HandleAsync(RenameProjectRequest req, CancellationToken ct)
         {
-            var project = (await EventSourcingHandler.GetByIdAsync(req.Id))!;
+            var project = (await EventSourcingHandler.GetAggregateByIdAsync(req.Id))!;
             project.EditName(req.NewTitle);
-            await EventSourcingHandler.SaveAsync(project);
-            await SendOkAsync(new RenameProjectResponse(project.Id), ct);
+            await EventSourcingHandler.SaveAggregateAsync(project);
+            await SendOkAsync(new RenameProjectResponse(project.Entity.Id), ct);
         }
     }
 }

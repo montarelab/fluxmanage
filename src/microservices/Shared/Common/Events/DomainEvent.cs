@@ -11,7 +11,7 @@ public abstract record DomainEvent(Guid Id)
 }
 
 public abstract record DomainEvent<TAggregateType>(Guid Id) : DomainEvent(Id)
-    where TAggregateType : IEntity
+    where TAggregateType : Entity
 {
     public override string AggregateType => typeof(TAggregateType).Name;
     public override string EventType => GetType().Name;

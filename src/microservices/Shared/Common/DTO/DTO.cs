@@ -1,4 +1,4 @@
-using TaskStatus = Common.Domain.Models.TaskStatus;
+using TaskStatus = Common.Domain.Entities.TaskStatus;
 
 namespace Common.DTO;
 

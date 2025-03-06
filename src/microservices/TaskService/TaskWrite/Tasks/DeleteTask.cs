@@ -1,6 +1,7 @@
-using Common.Domain.Models;
+using Common.Domain.Aggregates;
 using Common.EventSourcing;
 using FastEndpoints;
+using Task = System.Threading.Tasks.Task;
 
 namespace TaskWrite.Tasks;
 
@@ -23,10 +24,10 @@ public static class DeleteTask
         public override async Task HandleAsync(CancellationToken ct)
         {
             var id = Route<Guid>("id");
-            var task = (await EventSourcingHandler.GetByIdAsync(id))!;
+            var task = (await EventSourcingHandler.GetAggregateByIdAsync(id))!;
             task.DeleteTask();
-            await EventSourcingHandler.SaveAsync(task);
-            await SendOkAsync(new DeleteTaskResponse(task.Id), ct);
+            await EventSourcingHandler.SaveAggregateAsync(task);
+            await SendOkAsync(new DeleteTaskResponse(task.Entity.Id), ct);
         }
     }
 }

@@ -1,14 +1,10 @@
+using Common.Domain.Entities;
 using Common.Events.Models;
 
-namespace Common.Domain.Models;
+namespace Common.Domain.Aggregates;
 
-public class EpicAggregate : AggregateRoot
+public class EpicAggregate : IEntity<Epic>
 {
-    private string Title { get; set; } = string.Empty;
-    private Guid CreatedBy { get; set; } = Guid.Empty;
-    private Guid ProjectId { get; set; }
-    private DateTime CreatedDate { get; set; } = DateTime.Now;
-    
     public EpicAggregate() { }
 
     public EpicAggregate(Guid id, string name, Guid projectId, Guid createdBy)
@@ -25,11 +21,12 @@ public class EpicAggregate : AggregateRoot
     protected void Apply(EpicCreatedEvent @event)
     {
         IsActive = true;
+        Entity.Id = @event.Id;
         Id = @event.Id;
-        Title = @event.Name;
-        CreatedBy = @event.CreatedBy;
-        ProjectId = @event.ProjectId;
-        CreatedDate = @event.TriggeredOn;
+        Entity.Title = @event.Name;
+        Entity.CreatedBy = @event.CreatedBy;
+        Entity.ProjectId = @event.ProjectId;
+        Entity.CreatedDate = @event.TriggeredOn;
     }
     
     public void EditName(string title)
@@ -44,14 +41,14 @@ public class EpicAggregate : AggregateRoot
             throw new InvalidOperationException("Epic name cannot be empty.");
         }
 
-        if (string.Equals(title, Title, StringComparison.Ordinal))
+        if (string.Equals(title, Entity.Title, StringComparison.Ordinal))
         {
             throw new InvalidOperationException($"You cannot set the same name: {title}.");
         }
         
         RaiseEvent(new EpicUpdatedEvent
         (
-            Id: Id,
+            Id: Entity.Id,
             Title: title 
         ));
     }
@@ -68,11 +65,12 @@ public class EpicAggregate : AggregateRoot
             throw new InvalidOperationException("You cannot delete already deleted epic!");
         }
         
-        RaiseEvent(new EpicDeletedEvent(Id));
+        RaiseEvent(new EpicDeletedEvent(Entity.Id));
     }
     
     protected void Apply(EpicDeletedEvent @event)
     {
+        Entity.Id = @event.Id;
         Id = @event.Id;
         IsActive = false;
     }

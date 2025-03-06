@@ -8,7 +8,7 @@ public class EventStore(IEventStoreRepository eventStoreRepository, IEventProduc
 {
     public async Task SaveEventsAsync(Guid aggregateId, IEnumerable<DomainEvent> events, int expectedVersion)
     {
-        var eventStream = await eventStoreRepository.FindByAggregateId(aggregateId);
+        var eventStream = await eventStoreRepository.FindEventsByAggregateId(aggregateId);
 
         if (expectedVersion != -1 && eventStream[^1].Version != expectedVersion)// ^1 means the last element
         {
@@ -37,10 +37,10 @@ public class EventStore(IEventStoreRepository eventStoreRepository, IEventProduc
         }
     }
 
-    public async Task<List<DomainEvent>> GetEventsAsync(Guid aggregateId)
+    public async Task<List<DomainEvent>> GetEventsByAggregateIdAsync(Guid aggregateId)
     {
         Console.WriteLine("AggregateId: "+aggregateId);
-        var eventStream = await eventStoreRepository.FindByAggregateId(aggregateId);
+        var eventStream = await eventStoreRepository.FindEventsByAggregateId(aggregateId);
 
         if (eventStream == null || eventStream.Count == 0)
         {
@@ -55,7 +55,7 @@ public class EventStore(IEventStoreRepository eventStoreRepository, IEventProduc
 
     public async Task<List<Guid>> GetAggregateIdsAsync()
     {
-        List<EventModel> eventStream = await eventStoreRepository.FindAllAsync();
+        List<EventModel> eventStream = await eventStoreRepository.FindAllEventsAsync();
 		
         if (eventStream.Count == 0) return[];
 		

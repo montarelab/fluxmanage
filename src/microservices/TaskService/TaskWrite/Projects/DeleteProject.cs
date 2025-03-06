@@ -1,6 +1,7 @@
-using Common.Domain.Models;
+using Common.Domain.Aggregates;
 using Common.EventSourcing;
 using FastEndpoints;
+using Task = System.Threading.Tasks.Task;
 
 namespace TaskWrite.Projects;
 
@@ -21,10 +22,10 @@ public static class DeleteProject
         public override async Task HandleAsync(CancellationToken ct)
         {
             var id = Route<Guid>("id");
-            var project = (await EventSourcingHandler.GetByIdAsync(id))!;
+            var project = (await EventSourcingHandler.GetAggregateByIdAsync(id))!;
             project.DeleteProject();
-            await EventSourcingHandler.SaveAsync(project);
-            await SendOkAsync(new DeleteProjectResponse(project.Id), ct);
+            await EventSourcingHandler.SaveAggregateAsync(project);
+            await SendOkAsync(new DeleteProjectResponse(project.Entity.Id), ct);
         }
     }
 }

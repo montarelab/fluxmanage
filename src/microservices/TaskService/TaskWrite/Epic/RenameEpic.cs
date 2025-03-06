@@ -1,7 +1,8 @@
-using Common.Domain.Models;
+using Common.Domain.Aggregates;
 using Common.EventSourcing;
 using FastEndpoints;
 using FluentValidation;
+using Task = System.Threading.Tasks.Task;
 
 namespace TaskWrite.Epic;
 
@@ -15,7 +16,7 @@ public static class RenameEpic
         public Validator(IEventSourcingHandler<EpicAggregate> eventSourcingHandler)
         {
             RuleFor(x => x.Id)
-                .MustAsync(async (id, _) => await eventSourcingHandler.GetByIdAsync(id) != null)
+                .MustAsync(async (id, _) => await eventSourcingHandler.GetAggregateByIdAsync(id) != null)
                 .WithMessage((_, id) => $"Epic by id {id} not found");
             
             RuleFor(x => x.NewTitle)
@@ -40,10 +41,10 @@ public static class RenameEpic
 
         public override async Task HandleAsync(RenameEpicRequest req, CancellationToken ct)
         {
-            var epic = (await EventSourcingHandler.GetByIdAsync(req.Id))!;
+            var epic = (await EventSourcingHandler.GetAggregateByIdAsync(req.Id))!;
             epic.EditName(req.NewTitle);
-            await EventSourcingHandler.SaveAsync(epic);
-            await SendOkAsync(new RenameEpicResponse(epic.Id), ct);
+            await EventSourcingHandler.SaveAggregateAsync(epic);
+            await SendOkAsync(new RenameEpicResponse(epic.Entity.Id), ct);
         }
     }
 }

@@ -1,8 +1,9 @@
-using Common.Domain.Models;
+using Common.Domain.Aggregates;
 using Common.DTO;
 using Common.EventSourcing;
 using FastEndpoints;
 using FluentValidation;
+using Task = System.Threading.Tasks.Task;
 
 namespace TaskWrite.Tasks;
 
@@ -23,10 +24,10 @@ public static class UpdateTask
 
         public override async Task HandleAsync(UpdateTaskRequest req, CancellationToken ct)
         {
-            var task = (await EventSourcingHandler.GetByIdAsync(req.Id))!;
+            var task = (await EventSourcingHandler.GetAggregateByIdAsync(req.Id))!;
             task.Update(req);
-            await EventSourcingHandler.SaveAsync(task);
-            await SendOkAsync(new UpdateTaskResponse(task.Id), ct);
+            await EventSourcingHandler.SaveAggregateAsync(task);
+            await SendOkAsync(new UpdateTaskResponse(task.Entity.Id), ct);
         }
     }
     
@@ -35,7 +36,7 @@ public static class UpdateTask
             public Validator(IEventSourcingHandler<TaskAggregate> eventSourcingHandler)
             {
                 RuleFor(x => x.Id)
-                    .MustAsync(async (id, _) => await eventSourcingHandler.GetByIdAsync(id) != null)
+                    .MustAsync(async (id, _) => await eventSourcingHandler.GetAggregateByIdAsync(id) != null)
                     .WithMessage((_, id) => $"Task by id {id} not found");
 
                 RuleFor(x => x.Title)
@@ -59,7 +60,7 @@ public static class UpdateTask
                 // todo validate if epic exists
                 RuleFor(x => x.ParentTaskId)
                     .MustAsync(async (parentTaskId, _) => 
-                        await eventSourcingHandler.GetByIdAsync(parentTaskId!.Value) != null)
+                        await eventSourcingHandler.GetAggregateByIdAsync(parentTaskId!.Value) != null)
                     .WithMessage((_, id) => $"Parent task by id {id} does not exist.")
                     .When(x => x.ParentTaskId != null);
                 

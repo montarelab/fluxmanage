@@ -2,9 +2,9 @@ using Common.Domain;
 
 namespace Common.EventSourcing;
 
-public interface IEventSourcingHandler<TAggregateRoot> where TAggregateRoot : AggregateRoot
+public interface IEventSourcingHandler<TAggregate> where TAggregate : IAggregateRoot  
 {
-    Task SaveAsync(TAggregateRoot aggregateRoot);
+    Task SaveAggregateAsync(TAggregate aggregateRoot);
 
-    Task<TAggregateRoot?> GetByIdAsync(Guid aggregateId);
+    Task<TAggregate?> GetAggregateByIdAsync(Guid aggregateId);
 }
