@@ -8,7 +8,8 @@ namespace TaskRead.KafkaConsumer;
 public class EventHandler(
     IRepository<Ticket> taskRepository,
     IRepository<Epic> epicRepository,
-    IRepository<Project> projectRepository
+    IRepository<Project> projectRepository,
+    ILogger<EventHandler> logger
     )
     : IEventHandler<TicketCreatedEvent>,
         IEventHandler<TicketUpdatedEvent>,
@@ -24,7 +25,16 @@ public class EventHandler(
 {
     public Task HandleAsync(TicketCreatedEvent eventModel, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Handling TicketCreatedEvent");
+        var task = new Ticket
+        {
+            Id = eventModel.Id,
+            Title = eventModel.Title,
+            ProjectId = eventModel.ProjectId,
+            CreatedBy = eventModel.CreatedBy,
+            CreatedDate = eventModel.TriggeredOn
+        };
+        return taskRepository.AddAsync(task, ct);
     }
 
     public Task HandleAsync(TicketUpdatedEvent eventModel, CancellationToken ct)
