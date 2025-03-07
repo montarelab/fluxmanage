@@ -1,26 +1,26 @@
-using TaskStatus = Common.Domain.Entities.TaskStatus;
-using Task = Common.Domain.Entities.Task;
+using Common.Domain.Entities;
+
 namespace Common.Events.Models;
 
-public record TaskCreatedEvent(Guid Id, Guid ProjectId, string Title, Guid CreatedBy) 
-    : EntityCreatedEvent<Task>(Id);
+public record TicketCreatedEvent(Guid Id, Guid ProjectId, string Title, Guid CreatedBy) 
+    : EntityCreatedEvent<Ticket>(Id);
 
-public record TaskUpdatedEvent(
+public record TicketUpdatedEvent(
     Guid Id,
     string? Title,
     string? Description,
     DateTime? StartDate,
     DateTime? DueDate,
     Guid? AssigneeId,
-    Guid? ParentTaskId,
+    Guid? ParentTicketId,
     Guid? EpicId,
     int? EstimatedStoryPoints,
-    TaskStatus? Status,
+    TicketStatus? Status,
     IDictionary<string, string>? CustomFields
-) : EntityUpdatedEvent<Task>(Id);
+) : EntityUpdatedEvent<Ticket>(Id);
 
-public record TaskDeletedEvent(Guid Id) : EntityDeletedEvent<Task>(Id);
+public record TicketDeletedEvent(Guid Id) : EntityDeletedEvent<Ticket>(Id);
 
-public record TaskAssignedEvent(Guid Id, Guid AssigneeId) : DomainEvent<Task>(Id);
+public record TicketAssignedEvent(Guid Id, Guid AssigneeId) : DomainEvent<Ticket>(Id);
 
-public record TaskCompletedEvent(Guid Id) : DomainEvent<Task>(Id);
+public record TicketCompletedEvent(Guid Id) : DomainEvent<Ticket>(Id);

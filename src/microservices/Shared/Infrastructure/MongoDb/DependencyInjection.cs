@@ -24,9 +24,9 @@ public static class DependencyInjection
         BsonClassMap.RegisterClassMap<ProjectUpdatedEvent>();
         BsonClassMap.RegisterClassMap<ProjectDeletedEvent>();
 
-        BsonClassMap.RegisterClassMap<TaskCreatedEvent>();
-        BsonClassMap.RegisterClassMap<TaskDeletedEvent>();
-        BsonClassMap.RegisterClassMap<TaskUpdatedEvent>();
+        BsonClassMap.RegisterClassMap<TicketCreatedEvent>();
+        BsonClassMap.RegisterClassMap<TicketDeletedEvent>();
+        BsonClassMap.RegisterClassMap<TicketUpdatedEvent>();
 
         BsonClassMap.RegisterClassMap<EpicCreatedEvent>();
         BsonClassMap.RegisterClassMap<EpicUpdatedEvent>();

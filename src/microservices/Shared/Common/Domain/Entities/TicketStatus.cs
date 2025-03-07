@@ -1,6 +1,6 @@
 namespace Common.Domain.Entities;
 
-public enum TaskStatus
+public enum TicketStatus
 {
     Created,
     InProgress,

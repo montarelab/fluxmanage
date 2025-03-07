@@ -3,16 +3,15 @@ using Common.Domain.Aggregates;
 using Common.EventSourcing;
 using FastEndpoints;
 using FluentValidation;
-using Task = System.Threading.Tasks.Task;
 
-namespace TaskWrite.Tasks;
+namespace TaskWrite.Ticket;
 
-public static class CreateTask
+public static class CreateTicket
 {
-    public record CreateTaskRequest(Guid ProjectId, string Title);
-    public record CreateTaskResponse(Guid Id);
+    public record CreateTicketRequest(Guid ProjectId, string Title);
+    public record CreateTicketResponse(Guid Id);
     
-    public class Validator : Validator<CreateTaskRequest>
+    public class Validator : Validator<CreateTicketRequest>
     {
         public Validator(IEventSourcingHandler<ProjectAggregate> eventSourcingHandler)
         {
@@ -28,29 +27,29 @@ public static class CreateTask
         }
     }
     
-    public class Endpoint : Endpoint<CreateTaskRequest, CreateTaskResponse>
+    public class Endpoint : Endpoint<CreateTicketRequest, CreateTicketResponse>
     {
-        public IEventSourcingHandler<TaskAggregate> EventSourcingHandler { get; set; } = null!;
+        public IEventSourcingHandler<TicketAggregate> EventSourcingHandler { get; set; } = null!;
         public ICurrentUserService CurrentUserService { get; set; } = null!;
         
         public override void Configure()
         {
-            Post("/tasks");
+            Post("/tickets");
             AllowAnonymous();
 
             // todo introduce permissions
         }
 
-        public override async Task HandleAsync(CreateTaskRequest req, CancellationToken ct)
+        public override async Task HandleAsync(CreateTicketRequest req, CancellationToken ct)
         {
-            var task = new TaskAggregate(
+            var task = new TicketAggregate(
                 id: Guid.NewGuid(),
                 projectId: req.ProjectId,
                 title: req.Title,
                 createdBy: CurrentUserService.GetUserId());
             
             await EventSourcingHandler.SaveAggregateAsync(task);
-            await SendOkAsync(new CreateTaskResponse(task.Entity.Id), ct);
+            await SendOkAsync(new CreateTicketResponse(task.Entity.Id), ct);
         }
     }
 }

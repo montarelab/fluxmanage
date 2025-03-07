@@ -8,7 +8,6 @@ using Infrastructure;
 using Infrastructure.MongoDb;
 using Infrastructure.Swagger;
 using TaskRead.Services;
-using Task = Common.Domain.Entities.Task;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +19,7 @@ builder.Services.Configure<ProducerConfig>(builder.Configuration.GetSection(name
 
 var assembly = Assembly.GetExecutingAssembly();
 
-builder.Services.AddScoped<IRepository<Task>, TaskMongoRepository>();
+builder.Services.AddScoped<IRepository<Ticket>, TaskMongoRepository>();
 builder.Services.AddScoped<IRepository<Epic>, EpicMongoRepository>();
 builder.Services.AddScoped<IRepository<Project>, ProjectMongoRepository>();
 

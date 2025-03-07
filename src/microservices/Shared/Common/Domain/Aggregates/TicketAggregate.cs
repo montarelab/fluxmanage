@@ -1,16 +1,16 @@
+using Common.Domain.Entities;
 using Common.DTO;
 using Common.Events.Models;
-using TaskStatus = Common.Domain.Entities.TaskStatus;
-using Task = Common.Domain.Entities.Task;
+
 namespace Common.Domain.Aggregates;
 
-public class TaskAggregate : IEntity<Task>
+public class TicketAggregate : IEntity<Ticket>
 {
-    public TaskAggregate() { }
+    public TicketAggregate() { }
 
-    public TaskAggregate(Guid id, Guid projectId, string title, Guid createdBy)
+    public TicketAggregate(Guid id, Guid projectId, string title, Guid createdBy)
     {
-        RaiseEvent(new TaskCreatedEvent
+        RaiseEvent(new TicketCreatedEvent
         (
             Id: id,
             ProjectId: projectId,
@@ -19,7 +19,7 @@ public class TaskAggregate : IEntity<Task>
         ));
     }
     
-    protected void Apply(TaskCreatedEvent @event)
+    protected void Apply(TicketCreatedEvent @event)
     {
         IsActive = true;
         Entity.Id = @event.Id;
@@ -30,65 +30,65 @@ public class TaskAggregate : IEntity<Task>
         Entity.CreatedDate = @event.TriggeredOn;
     }
 
-    public void Update(TaskUpdateData updatedData)
+    public void Update(TicketUpdateData updatedData)
     {
         if (!IsActive)
         {
-            throw new InvalidOperationException("You cannot edit deleted task!");
+            throw new InvalidOperationException("You cannot edit deleted Ticket!");
         }
         
-        RaiseEvent(new TaskUpdatedEvent(
+        RaiseEvent(new TicketUpdatedEvent(
             updatedData.Id,
             updatedData.Title,
             updatedData.Description,
             updatedData.StartDate,
             updatedData.DueDate,
             updatedData.AssigneeId,
-            updatedData.ParentTaskId,
+            updatedData.ParentTicketId,
             updatedData.EpicId,
             updatedData.EstimatedStoryPoints,
             updatedData.Status,
             updatedData.CustomFields));
     }
     
-    protected void Apply(TaskUpdatedEvent @event)
+    protected void Apply(TicketUpdatedEvent @event)
     {
         base.Apply(@event);
     }
     
-    public void DeleteTask()
+    public void DeleteTicket()
     {
         if (!IsActive)
         {
-            throw new InvalidOperationException("You cannot delete already deleted task!");
+            throw new InvalidOperationException("You cannot delete already deleted Ticket!");
         }
         
-        RaiseEvent(new TaskDeletedEvent(Entity.Id));
+        RaiseEvent(new TicketDeletedEvent(Entity.Id));
     }
     
-    protected void Apply(TaskDeletedEvent @event)
+    protected void Apply(TicketDeletedEvent @event)
     {
         Entity.Id = @event.Id;
         IsActive = false;
     }
     
-    public void CompleteTask()
+    public void CompleteTicket()
     {
-        RaiseEvent(new TaskCompletedEvent(Entity.Id));
+        RaiseEvent(new TicketCompletedEvent(Entity.Id));
     }
     
-    protected void Apply(TaskCompletedEvent @event)
+    protected void Apply(TicketCompletedEvent @event)
     {
         Entity.Id = @event.Id;
-        Entity.Status = TaskStatus.Completed;
+        Entity.Status = TicketStatus.Completed;
     }
     
-    public void AssignTask(Guid assigneeId)
+    public void AssignTicket(Guid assigneeId)
     {
-        RaiseEvent(new TaskAssignedEvent(Entity.Id, assigneeId));
+        RaiseEvent(new TicketAssignedEvent(Entity.Id, assigneeId));
     }
     
-    protected void Apply(TaskAssignedEvent @event)
+    protected void Apply(TicketAssignedEvent @event)
     {
         Entity.Id = @event.Id;
         Id = @event.Id;

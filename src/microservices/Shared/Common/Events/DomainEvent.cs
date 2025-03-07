@@ -1,8 +1,9 @@
 using Common.Domain;
+using FastEndpoints;
 
 namespace Common.Events;
 
-public abstract record DomainEvent(Guid Id) 
+public abstract record DomainEvent(Guid Id)  : IEvent
 {
     public DateTime TriggeredOn { get; } = DateTime.Now;
     public int Version { get; init; }

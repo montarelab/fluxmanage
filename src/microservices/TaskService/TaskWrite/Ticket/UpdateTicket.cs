@@ -5,35 +5,35 @@ using FastEndpoints;
 using FluentValidation;
 using Task = System.Threading.Tasks.Task;
 
-namespace TaskWrite.Tasks;
+namespace TaskWrite.Ticket;
 
-public static class UpdateTask
+public static class UpdateTicket
 {
-    public record UpdateTaskRequest : TaskUpdateData;
-    public record UpdateTaskResponse(Guid Id);
-    public class Endpoint : Endpoint<UpdateTaskRequest, UpdateTaskResponse>
+    public record UpdateTicketRequest : TicketUpdateData;
+    public record UpdateTicketResponse(Guid Id);
+    public class Endpoint : Endpoint<UpdateTicketRequest, UpdateTicketResponse>
     {
-        public IEventSourcingHandler<TaskAggregate> EventSourcingHandler { get; set; } = null!;
+        public IEventSourcingHandler<TicketAggregate> EventSourcingHandler { get; set; } = null!;
         public override void Configure()
         {
-            Put("/tasks");
+            Put("/tickets");
             AllowAnonymous();
 
             // todo introduce permissions
         }
 
-        public override async Task HandleAsync(UpdateTaskRequest req, CancellationToken ct)
+        public override async Task HandleAsync(UpdateTicketRequest req, CancellationToken ct)
         {
             var task = (await EventSourcingHandler.GetAggregateByIdAsync(req.Id))!;
             task.Update(req);
             await EventSourcingHandler.SaveAggregateAsync(task);
-            await SendOkAsync(new UpdateTaskResponse(task.Entity.Id), ct);
+            await SendOkAsync(new UpdateTicketResponse(task.Entity.Id), ct);
         }
     }
     
-     public class Validator : Validator<UpdateTaskRequest>
+     public class Validator : Validator<UpdateTicketRequest>
         {
-            public Validator(IEventSourcingHandler<TaskAggregate> eventSourcingHandler)
+            public Validator(IEventSourcingHandler<TicketAggregate> eventSourcingHandler)
             {
                 RuleFor(x => x.Id)
                     .MustAsync(async (id, _) => await eventSourcingHandler.GetAggregateByIdAsync(id) != null)
@@ -58,11 +58,11 @@ public static class UpdateTask
                 
                 // todo validate if Assignee id is valid and a user exists with that id
                 // todo validate if epic exists
-                RuleFor(x => x.ParentTaskId)
-                    .MustAsync(async (parentTaskId, _) => 
-                        await eventSourcingHandler.GetAggregateByIdAsync(parentTaskId!.Value) != null)
+                RuleFor(x => x.ParentTicketId)
+                    .MustAsync(async (ParentTicketId, _) => 
+                        await eventSourcingHandler.GetAggregateByIdAsync(ParentTicketId!.Value) != null)
                     .WithMessage((_, id) => $"Parent task by id {id} does not exist.")
-                    .When(x => x.ParentTaskId != null);
+                    .When(x => x.ParentTicketId != null);
                 
                 RuleFor(x => x.CustomFields)
                     .Must((_, customFields) => customFields!.Count <= 10)

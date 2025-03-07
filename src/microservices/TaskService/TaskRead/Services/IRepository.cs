@@ -27,7 +27,7 @@ public abstract class MongoEntityRepository<T> : IRepository<T> where T : IEntit
         _logger = logger;
         var mongoClient = new MongoClient(config.Value.ConnectionString);
         var mongoDatabase = mongoClient.GetDatabase(config.Value.Database);
-        _eventStoreCollection = mongoDatabase.GetCollection<T>(config.Value.Collection);
+        _eventStoreCollection = mongoDatabase.GetCollection<T>(typeof(T).Name);
     }
 
     public Task<T> GetByIdAsync(Guid id, CancellationToken ct)

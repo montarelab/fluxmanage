@@ -3,19 +3,19 @@ using Common.EventSourcing;
 using FastEndpoints;
 using Task = System.Threading.Tasks.Task;
 
-namespace TaskWrite.Tasks;
+namespace TaskWrite.Ticket;
 
-public static class DeleteTask
+public static class DeleteTicket
 {
-    public record DeleteTaskResponse(Guid Id);
+    public record DeleteTicketResponse(Guid Id);
 
-    public class Endpoint : EndpointWithoutRequest<DeleteTaskResponse>
+    public class Endpoint : EndpointWithoutRequest<DeleteTicketResponse>
     {
-        public IEventSourcingHandler<TaskAggregate> EventSourcingHandler { get; set; } = null!;
+        public IEventSourcingHandler<TicketAggregate> EventSourcingHandler { get; set; } = null!;
         
         public override void Configure()
         {
-            Delete("/tasks/{id:guid}");
+            Delete("/tickets/{id:guid}");
             AllowAnonymous();
 
             // todo introduce permissions
@@ -25,9 +25,9 @@ public static class DeleteTask
         {
             var id = Route<Guid>("id");
             var task = (await EventSourcingHandler.GetAggregateByIdAsync(id))!;
-            task.DeleteTask();
+            task.DeleteTicket();
             await EventSourcingHandler.SaveAggregateAsync(task);
-            await SendOkAsync(new DeleteTaskResponse(task.Entity.Id), ct);
+            await SendOkAsync(new DeleteTicketResponse(task.Entity.Id), ct);
         }
     }
 }

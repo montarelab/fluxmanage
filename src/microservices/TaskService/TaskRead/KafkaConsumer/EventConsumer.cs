@@ -34,6 +34,12 @@ public class EventConsumer(
 
             // create a json options with our custom converter
             var @event = JsonSerializer.Deserialize<DomainEvent>(consumerResult.Message.Value, options);
+            
+            
+            // todo run the event handler in a separate thread
+            
+            // IEventBus eventBus = new EventBus();
+            
             var handlerMethod = eventHandler.GetType().GetMethod("On", [@event!.GetType()]);
 
             if (handlerMethod == null)

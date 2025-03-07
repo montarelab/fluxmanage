@@ -32,11 +32,11 @@ public class EventJsonConverter : JsonConverter<DomainEvent>
         string jsonString = doc.RootElement.GetRawText();
 
         return typeDiscriminator switch{
-            nameof(TaskCreatedEvent) => JsonSerializer.Deserialize<TaskCreatedEvent>(jsonString, options),
-            nameof(TaskUpdatedEvent) => JsonSerializer.Deserialize<TaskUpdatedEvent>(jsonString, options),
-            nameof(TaskDeletedEvent) => JsonSerializer.Deserialize<TaskDeletedEvent>(jsonString, options),
-            nameof(TaskCompletedEvent) => JsonSerializer.Deserialize<TaskCompletedEvent>(jsonString, options),
-            nameof(TaskAssignedEvent) => JsonSerializer.Deserialize<TaskAssignedEvent>(jsonString, options),
+            nameof(TicketCreatedEvent) => JsonSerializer.Deserialize<TicketCreatedEvent>(jsonString, options),
+            nameof(TicketUpdatedEvent) => JsonSerializer.Deserialize<TicketUpdatedEvent>(jsonString, options),
+            nameof(TicketDeletedEvent) => JsonSerializer.Deserialize<TicketDeletedEvent>(jsonString, options),
+            nameof(TicketCompletedEvent) => JsonSerializer.Deserialize<TicketCompletedEvent>(jsonString, options),
+            nameof(TicketAssignedEvent) => JsonSerializer.Deserialize<TicketAssignedEvent>(jsonString, options),
             nameof(ProjectCreatedEvent) => JsonSerializer.Deserialize<ProjectCreatedEvent>(jsonString, options),
             nameof(ProjectUpdatedEvent) => JsonSerializer.Deserialize<ProjectUpdatedEvent>(jsonString, options),
             nameof(ProjectDeletedEvent) => JsonSerializer.Deserialize<ProjectDeletedEvent>(jsonString, options),
