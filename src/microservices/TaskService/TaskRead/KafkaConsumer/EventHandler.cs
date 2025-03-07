@@ -38,52 +38,112 @@ public class EventHandler(
     }
 
     public Task HandleAsync(TicketUpdatedEvent eventModel, CancellationToken ct)
+{
+    logger.LogInformation("Handling TicketUpdatedEvent");
+    var task = new Ticket
     {
-        throw new NotImplementedException();
-    }
+        Id = eventModel.Id,
+        Title = eventModel.Title ?? string.Empty,
+        Description = eventModel.Description ?? string.Empty,
+        StartDate = eventModel.StartDate ?? DateTime.Now,
+        DueDate = eventModel.DueDate ?? DateTime.Now.AddDays(7),
+        AssigneeId = eventModel.AssigneeId ?? Guid.Empty,
+        ParentTicketId = eventModel.ParentTicketId,
+        EpicId = eventModel.EpicId,
+        EstimatedStoryPoints = eventModel.EstimatedStoryPoints ?? 0,
+        Status = eventModel.Status ?? TicketStatus.Created,
+        CustomFields = eventModel.CustomFields,
+        ProjectId = Guid.Empty // Set appropriate ProjectId
+    };
+    return taskRepository.UpdateAsync(task, ct);
+}
+
+public Task HandleAsync(TicketCompletedEvent eventModel, CancellationToken ct)
+{
+    logger.LogInformation("Handling TicketCompletedEvent");
+    var task = new Ticket
+    {
+        Id = eventModel.Id,
+        Status = TicketStatus.Completed
+    };
+    return taskRepository.UpdateAsync(task, ct);
+}
+
+public Task HandleAsync(TicketAssignedEvent eventModel, CancellationToken ct)
+{
+    logger.LogInformation("Handling TicketAssignedEvent");
+    var task = new Ticket
+    {
+        Id = eventModel.Id,
+        AssigneeId = eventModel.AssigneeId
+    };
+    return taskRepository.UpdateAsync(task, ct);
+}
+
+public Task HandleAsync(ProjectUpdatedEvent eventModel, CancellationToken ct)
+{
+    logger.LogInformation("Handling ProjectUpdatedEvent");
+    var project = new Project
+    {
+        Id = eventModel.Id,
+        Title = eventModel.Title ?? string.Empty
+    };
+    return projectRepository.UpdateAsync(project, ct);
+}
+
+public Task HandleAsync(EpicUpdatedEvent eventModel, CancellationToken ct)
+{
+    logger.LogInformation("Handling EpicUpdatedEvent");
+    var epic = new Epic
+    {
+        Id = eventModel.Id,
+        Title = eventModel.Title ?? string.Empty
+    };
+    return epicRepository.UpdateAsync(epic, ct);
+}
 
     public Task HandleAsync(TicketDeletedEvent eventModel, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Handling TicketDeletedEvent");
+        return taskRepository.DeleteAsync(eventModel.Id, ct);
     }
-
-    public Task HandleAsync(TicketCompletedEvent eventModel, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task HandleAsync(TicketAssignedEvent eventModel, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
+    
     public Task HandleAsync(ProjectCreatedEvent eventModel, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Handling ProjectCreatedEvent");
+        var project = new Project
+        {
+            Id = eventModel.Id,
+            Title = eventModel.Name,
+            CreatedBy = eventModel.CreatedBy,
+            CreatedDate = eventModel.TriggeredOn
+        };
+        return projectRepository.AddAsync(project, ct);
     }
-
-    public Task HandleAsync(ProjectUpdatedEvent eventModel, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
+    
     public Task HandleAsync(ProjectDeletedEvent eventModel, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Handling ProjectDeletedEvent");
+        return projectRepository.DeleteAsync(eventModel.Id, ct);
     }
 
     public Task HandleAsync(EpicCreatedEvent eventModel, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Handling EpicCreatedEvent");
+        var epic = new Epic
+        {
+            Id = eventModel.Id,
+            ProjectId = eventModel.ProjectId,
+            Title = eventModel.Name,
+            CreatedBy = eventModel.CreatedBy,
+            CreatedDate = eventModel.TriggeredOn
+        };
+        return epicRepository.AddAsync(epic, ct);
     }
-
-    public Task HandleAsync(EpicUpdatedEvent eventModel, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
-
+    
     public Task HandleAsync(EpicDeletedEvent eventModel, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Handling EpicDeletedEvent");
+        return epicRepository.DeleteAsync(eventModel.Id, ct);
     }
 }

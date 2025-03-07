@@ -1,6 +1,6 @@
 using FastEndpoints;
 
-namespace TaskRead.Tasks;
+namespace TaskRead.Tickets;
 
 public static class GetTaskById
 {
