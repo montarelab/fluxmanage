@@ -3,7 +3,6 @@ using Common.Domain.Aggregates;
 using Common.EventSourcing;
 using FastEndpoints;
 using FluentValidation;
-using Task = System.Threading.Tasks.Task;
 
 namespace TaskWrite.Projects;
 

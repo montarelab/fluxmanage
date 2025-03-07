@@ -1,6 +1,6 @@
 using FastEndpoints;
 
-namespace TaskRead.Epic;
+namespace TaskRead.Epics;
 
 public static class GetEpicById
 {

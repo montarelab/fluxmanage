@@ -2,7 +2,6 @@ using Common.Domain.Entities;
 using Infrastructure.Config;
 using Infrastructure.EventSourcing;
 using Microsoft.Extensions.Options;
-using Epic = Common.Domain.Entities.Epic;
 
 namespace TaskRead.Services;
 

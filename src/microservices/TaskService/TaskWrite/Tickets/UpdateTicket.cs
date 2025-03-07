@@ -3,9 +3,8 @@ using Common.DTO;
 using Common.EventSourcing;
 using FastEndpoints;
 using FluentValidation;
-using Task = System.Threading.Tasks.Task;
 
-namespace TaskWrite.Ticket;
+namespace TaskWrite.Tickets;
 
 public static class UpdateTicket
 {

@@ -4,7 +4,7 @@ using Common.EventSourcing;
 using FastEndpoints;
 using FluentValidation;
 
-namespace TaskWrite.Ticket;
+namespace TaskWrite.Tickets;
 
 public static class CreateTicket
 {

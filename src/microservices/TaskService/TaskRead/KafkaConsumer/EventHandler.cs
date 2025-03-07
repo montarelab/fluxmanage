@@ -2,13 +2,12 @@ using Common.Domain.Entities;
 using Common.Events.Models;
 using FastEndpoints;
 using TaskRead.Services;
-using Epic = Common.Domain.Entities.Epic;
 
 namespace TaskRead.KafkaConsumer;
 
 public class EventHandler(
     IRepository<Ticket> taskRepository,
-    IRepository<Common.Domain.Entities.Ticket> epicRepository,
+    IRepository<Epic> epicRepository,
     IRepository<Project> projectRepository
     )
     : IEventHandler<TicketCreatedEvent>,

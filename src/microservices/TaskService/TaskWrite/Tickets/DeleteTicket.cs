@@ -1,9 +1,8 @@
 using Common.Domain.Aggregates;
 using Common.EventSourcing;
 using FastEndpoints;
-using Task = System.Threading.Tasks.Task;
 
-namespace TaskWrite.Ticket;
+namespace TaskWrite.Tickets;
 
 public static class DeleteTicket
 {
