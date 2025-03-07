@@ -3,7 +3,7 @@ using Common.Events.Models;
 
 namespace Common.Domain.Aggregates;
 
-public class EpicAggregate : IEntity<Epic>
+public class EpicAggregate : AggregateRoot<Epic>
 {
     public EpicAggregate() { }
 

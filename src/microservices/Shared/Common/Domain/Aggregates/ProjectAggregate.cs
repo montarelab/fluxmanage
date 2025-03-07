@@ -3,7 +3,7 @@ using Common.Events.Models;
 
 namespace Common.Domain.Aggregates;
 
-public class ProjectAggregate : IEntity<Project>
+public class ProjectAggregate : AggregateRoot<Project>
 {
     public ProjectAggregate() { }
 

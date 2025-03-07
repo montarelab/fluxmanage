@@ -4,7 +4,7 @@ using Common.Events.Models;
 
 namespace Common.Domain.Aggregates;
 
-public class TicketAggregate : IEntity<Ticket>
+public class TicketAggregate : AggregateRoot<Ticket>
 {
     public TicketAggregate() { }
 

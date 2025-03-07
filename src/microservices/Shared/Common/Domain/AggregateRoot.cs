@@ -3,10 +3,10 @@ using Common.Events;
 
 namespace Common.Domain;
 
-public abstract class IEntity<TEntity> : IAggregateRoot where TEntity : Entity
+public abstract class AggregateRoot<TEntity> : IAggregateRoot where TEntity : Entity, new()
 {
     private readonly List<DomainEvent> _changes = []; // uncommitted changes
-    public TEntity Entity { get; private set; }
+    public TEntity Entity { get; } = new();
     public Guid Id { get; set; }
 
     public bool IsActive { get; set; }
