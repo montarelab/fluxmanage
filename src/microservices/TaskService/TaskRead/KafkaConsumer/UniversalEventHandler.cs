@@ -1,27 +1,16 @@
 using Common.Domain.Entities;
 using Common.Events.Models;
-using FastEndpoints;
 using TaskRead.Services;
 
 namespace TaskRead.KafkaConsumer;
 
-public class EventHandler(
+public class UniversalEventHandler(
     IRepository<Ticket> taskRepository,
     IRepository<Epic> epicRepository,
     IRepository<Project> projectRepository,
-    ILogger<EventHandler> logger
+    ILogger<UniversalEventHandler> logger
     )
-    : IEventHandler<TicketCreatedEvent>,
-        IEventHandler<TicketUpdatedEvent>,
-        IEventHandler<TicketDeletedEvent>,
-        IEventHandler<TicketCompletedEvent>,
-        IEventHandler<TicketAssignedEvent>,
-        IEventHandler<ProjectCreatedEvent>,
-        IEventHandler<ProjectUpdatedEvent>,
-        IEventHandler<ProjectDeletedEvent>,
-        IEventHandler<EpicCreatedEvent>,
-        IEventHandler<EpicUpdatedEvent>,
-        IEventHandler<EpicDeletedEvent>
+    : IUniversalEventHandler
 {
     public Task HandleAsync(TicketCreatedEvent eventModel, CancellationToken ct)
     {

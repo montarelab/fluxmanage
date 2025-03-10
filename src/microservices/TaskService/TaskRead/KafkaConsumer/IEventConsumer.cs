@@ -2,5 +2,5 @@ namespace TaskRead.KafkaConsumer;
 
 public interface IEventConsumer
 {
-    void Consume(string topic);
+    void Consume(string topic, CancellationToken ct);
 }

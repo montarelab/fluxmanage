@@ -6,11 +6,11 @@ namespace Infrastructure.Swagger;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddSwagger(this IServiceCollection services)
+    public static IServiceCollection AddSwagger(this IServiceCollection services, string swaggerTitle)
     {
         return services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "Write Task Api", Version = "v1" });
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = swaggerTitle, Version = "v1" });
             c.OperationFilter<RouteParametersOperationFilter>();
         });
     }

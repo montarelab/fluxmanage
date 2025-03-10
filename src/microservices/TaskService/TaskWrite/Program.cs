@@ -1,8 +1,12 @@
 using System.Reflection;
+using Common.Auth;
+using Common.EventSourcing;
 using Confluent.Kafka;
 using FastEndpoints;
 using FluentValidation;
 using Infrastructure;
+using Infrastructure.EventSourcing;
+using Infrastructure.Middleware;
 using Infrastructure.MongoDb;
 using Infrastructure.Swagger;
 
@@ -16,10 +20,16 @@ builder.Services.Configure<ProducerConfig>(builder.Configuration.GetSection(name
 
 var assembly = Assembly.GetExecutingAssembly();
 
-builder.Services.AddInfrastructure();
+builder.Services
+    .AddScoped<ICurrentUserService, CurrentUserService>()
+    .AddScoped<IEventStoreRepository, MongoDbEventStoreRepository>()
+    .AddScoped<IEventProducer, EventProducer>()
+    .AddScoped<IEventStore, EventStore>()
+    .AddScoped(typeof(IEventSourcingHandler<>), typeof(EventSourcingHandler<>))
+    .AddScoped<ExceptionMiddleware>();
 builder.Services.AddValidatorsFromAssembly(assembly);
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwagger();
+builder.Services.AddSwagger("Write Task Api");
 builder.Services.AddFastEndpoints();
 
 var app = builder.Build();
