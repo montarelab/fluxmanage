@@ -19,7 +19,7 @@ builder.Services.Configure<ProducerConfig>(builder.Configuration.GetSection(name
 
 var assembly = Assembly.GetExecutingAssembly();
 
-builder.Services.AddScoped<IRepository<Ticket>, TaskMongoRepository>();
+builder.Services.AddScoped<IRepository<Ticket>, TicketMongoRepository>();
 builder.Services.AddScoped<IRepository<Epic>, EpicMongoRepository>();
 builder.Services.AddScoped<IRepository<Project>, ProjectMongoRepository>();
 

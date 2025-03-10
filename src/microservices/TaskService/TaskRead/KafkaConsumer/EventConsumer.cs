@@ -8,7 +8,8 @@ namespace TaskRead.KafkaConsumer;
 
 public class EventConsumer(
     IOptions<ConsumerConfig> config,
-    IEventHandler eventHandler
+    IEventHandler eventHandler,
+    ILogger<EventConsumer> logger
 ) : IEventConsumer
 {
     private readonly ConsumerConfig _config = config.Value;
@@ -21,7 +22,7 @@ public class EventConsumer(
             .Build();
 
         consumer.Subscribe(topic);
-        var options = new JsonSerializerOptions{Converters ={new EventJsonConverter()}};
+        var options = new JsonSerializerOptions { Converters = { new EventJsonConverter() } };
 
         while (true)
         {
@@ -32,25 +33,22 @@ public class EventConsumer(
                 continue;
             }
 
-            // create a json options with our custom converter
+            logger.LogInformation("Consumed message from topic {Topic} with key {Key}", topic, consumerResult.Message.Key);
+
             var @event = JsonSerializer.Deserialize<DomainEvent>(consumerResult.Message.Value, options);
-            
-            
-            // todo run the event handler in a separate thread
-            
-            // IEventBus eventBus = new EventBus();
-            
-            var handlerMethod = eventHandler.GetType().GetMethod("On", [@event!.GetType()]);
+
+            var handlerMethod = eventHandler.GetType().GetMethod("On", new[] { @event!.GetType() });
 
             if (handlerMethod == null)
             {
+                logger.LogError("Could not find event handler method for event type {EventType}", @event.GetType());
                 throw new ArgumentNullException(nameof(handlerMethod), "Could not find event handler method!");
             }
 
-            handlerMethod.Invoke(eventHandler, [@event]);
+            handlerMethod.Invoke(eventHandler, new[] { @event });
 
-            // commits an offset for the message. Hence, next time it will start from the next message
             consumer.Commit(consumerResult);
+            logger.LogInformation("Committed offset for message with key {Key}", consumerResult.Message.Key);
         }
     }
 }
