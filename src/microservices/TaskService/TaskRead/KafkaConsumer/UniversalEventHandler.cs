@@ -31,7 +31,7 @@ public class UniversalEventHandler(
     {
         logger.LogInformation("Handling TicketUpdatedEvent");
         var task = await taskRepository.GetByIdAsync(eventModel.Id, ct)
-            ?? throw new NotFoundException<Ticket>(eventModel.Id);
+            ?? throw new AggregateNotFoundException("Incorrect ticket aggregate Id provided! " + eventModel.Id);
     
         task.Id = eventModel.Id;
         task.Title = eventModel.Title ?? task.Title;
@@ -51,7 +51,7 @@ public class UniversalEventHandler(
     {
         logger.LogInformation("Handling TicketCompletedEvent");
         var task = await taskRepository.GetByIdAsync(eventModel.Id, ct)
-                   ?? throw new NotFoundException<Ticket>(eventModel.Id);
+                   ?? throw new AggregateNotFoundException("Incorrect ticket aggregate Id provided! " + eventModel.Id);
         task.Status = TicketStatus.Completed;
         await taskRepository.UpdateAsync(task, ct);
     }
@@ -60,7 +60,7 @@ public class UniversalEventHandler(
     {
         logger.LogInformation("Handling TicketAssignedEvent");
         var task = await taskRepository.GetByIdAsync(eventModel.Id, ct)
-                   ?? throw new NotFoundException<Ticket>(eventModel.Id);
+                   ?? throw new AggregateNotFoundException("Incorrect ticket aggregate Id provided! " + eventModel.Id);
     
         task.AssigneeId = eventModel.AssigneeId;
         await taskRepository.UpdateAsync(task, ct);
@@ -70,7 +70,7 @@ public class UniversalEventHandler(
     {
         logger.LogInformation("Handling ProjectUpdatedEvent");
         var project = await projectRepository.GetByIdAsync(eventModel.Id, ct)
-            ?? throw new NotFoundException<Project>(eventModel.Id);
+            ?? throw new AggregateNotFoundException("Incorrect project aggregate Id provided! " + eventModel.Id);
 
         project.Title = eventModel.Title ?? project.Title;
         await projectRepository.UpdateAsync(project, ct);
@@ -80,7 +80,7 @@ public class UniversalEventHandler(
     {
         logger.LogInformation("Handling EpicUpdatedEvent");
         var epic = await epicRepository.GetByIdAsync(eventModel.Id, ct)
-            ?? throw new NotFoundException<Epic>(eventModel.Id);
+            ?? throw new AggregateNotFoundException("Incorrect epic aggregate Id provided! " + eventModel.Id);
 
         epic.Title = eventModel.Title ?? epic.Title;
         await epicRepository.UpdateAsync(epic, ct);

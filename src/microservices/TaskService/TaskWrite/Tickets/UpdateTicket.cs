@@ -32,7 +32,10 @@ public static class UpdateTicket
     
      public class Validator : Validator<UpdateTicketRequest>
         {
-            public Validator(IEventSourcingHandler<TicketAggregate> eventSourcingHandler)
+            public Validator(
+                IEventSourcingHandler<TicketAggregate> eventSourcingHandler,
+                IEventSourcingHandler<EpicAggregate> epicEventSourcingHandler
+                )
             {
                 RuleFor(x => x.Id)
                     .MustAsync(async (id, _) => await eventSourcingHandler.GetAggregateByIdAsync(id) != null)
@@ -70,6 +73,11 @@ public static class UpdateTicket
                         customFields!.All(x => x.Key.Length <= 20 && x.Value.Length <= 200))
                     .WithMessage("Custom field key must be less than 20 characters and value must be less than 200 characters!")
                     .When(x => x.CustomFields != null);
+
+                RuleFor(x => x.EpicId)
+                    .MustAsync(async (id, _) => await epicEventSourcingHandler.GetAggregateByIdAsync(id!.Value) != null)
+                    .WithMessage((_, id) => $"Epic by id {id} not found")
+                    .When(request => request.EpicId != null);
             }
         }
         
