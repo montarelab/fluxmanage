@@ -1,8 +1,6 @@
 using System.Linq.Expressions;
 using Common.Domain;
-using Common.Events;
 using Infrastructure.Config;
-using Infrastructure.EventSourcing;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
@@ -55,8 +53,7 @@ public abstract class MongoEntityRepository<T> : IRepository<T> where T : IEntit
     {
         var filter = Builders<T>.Filter.Eq(e => e.Id, entity.Id);
         var update = Builders<T>.Update.Set(e => e, entity);
-        await _eventStoreCollection.UpdateOneAsync(filter, update, cancellationToken: ct);
-        _logger.LogInformation("Entity with id {Id} was updated", entity.Id);
+        await _eventStoreCollection.ReplaceOneAsync(filter, entity, cancellationToken: ct);        _logger.LogInformation("Entity with id {Id} was updated", entity.Id);
         return entity.Id;
     }
 

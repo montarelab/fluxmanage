@@ -10,13 +10,11 @@ public class EventJsonConverter : JsonConverter<DomainEvent>
     public override bool CanConvert(Type typeToConvert)
     {
         // checks if an argument is assignable to a variable of type BaseEvent
-        Console.WriteLine($"Type to convert: {typeToConvert} Can convert: {typeToConvert.IsAssignableFrom(typeof(DomainEvent))}");
         return typeToConvert.IsAssignableFrom(typeof(DomainEvent));
     }
 
     public override DomainEvent? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        Console.WriteLine("Start reading");
         // attempts to parse JsonDocument from the reader
         if (!JsonDocument.TryParseValue(ref reader, out var doc))
         {
@@ -32,8 +30,6 @@ public class EventJsonConverter : JsonConverter<DomainEvent>
 
         string? typeDiscriminator = eventType.GetString();
         string jsonString = doc.RootElement.GetRawText();
-
-        Console.WriteLine($"Type discriminator: {typeDiscriminator}");
         
         return typeDiscriminator switch{
             nameof(TicketCreatedEvent) => JsonSerializer.Deserialize<TicketCreatedEvent>(jsonString, options),

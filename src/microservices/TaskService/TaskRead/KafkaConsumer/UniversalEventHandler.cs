@@ -1,5 +1,6 @@
 using Common.Domain.Entities;
 using Common.Events.Models;
+using Common.Exceptions;
 using TaskRead.Services;
 
 namespace TaskRead.KafkaConsumer;
@@ -26,70 +27,64 @@ public class UniversalEventHandler(
         return taskRepository.AddAsync(task, ct);
     }
 
-    public Task HandleAsync(TicketUpdatedEvent eventModel, CancellationToken ct)
-{
-    logger.LogInformation("Handling TicketUpdatedEvent");
-    var task = new Ticket
+    public async Task HandleAsync(TicketUpdatedEvent eventModel, CancellationToken ct)
     {
-        Id = eventModel.Id,
-        Title = eventModel.Title ?? string.Empty,
-        Description = eventModel.Description ?? string.Empty,
-        StartDate = eventModel.StartDate ?? DateTime.Now,
-        DueDate = eventModel.DueDate ?? DateTime.Now.AddDays(7),
-        AssigneeId = eventModel.AssigneeId ?? Guid.Empty,
-        ParentTicketId = eventModel.ParentTicketId,
-        EpicId = eventModel.EpicId,
-        EstimatedStoryPoints = eventModel.EstimatedStoryPoints ?? 0,
-        Status = eventModel.Status ?? TicketStatus.Created,
-        CustomFields = eventModel.CustomFields,
-        ProjectId = Guid.Empty // Set appropriate ProjectId
-    };
-    return taskRepository.UpdateAsync(task, ct);
-}
+        logger.LogInformation("Handling TicketUpdatedEvent");
+        var task = await taskRepository.GetByIdAsync(eventModel.Id, ct)
+            ?? throw new NotFoundException<Ticket>(eventModel.Id);
+    
+        task.Id = eventModel.Id;
+        task.Title = eventModel.Title ?? task.Title;
+        task.Description = eventModel.Description ?? task.Description;
+        task.StartDate = eventModel.StartDate ?? task.StartDate;
+        task.DueDate = eventModel.DueDate ?? task.DueDate;
+        task.AssigneeId = eventModel.AssigneeId ?? task.AssigneeId;
+        task.ParentTicketId = eventModel.ParentTicketId ?? task.ParentTicketId;
+        task.EpicId = eventModel.EpicId ?? task.EpicId;
+        task.EstimatedStoryPoints = eventModel.EstimatedStoryPoints ?? task.EstimatedStoryPoints;
+        task.Status = eventModel.Status ?? task.Status;
+        task.CustomFields = eventModel.CustomFields ?? task.CustomFields;
+        await taskRepository.UpdateAsync(task, ct);
+    }
 
-public Task HandleAsync(TicketCompletedEvent eventModel, CancellationToken ct)
-{
-    logger.LogInformation("Handling TicketCompletedEvent");
-    var task = new Ticket
+    public async Task HandleAsync(TicketCompletedEvent eventModel, CancellationToken ct)
     {
-        Id = eventModel.Id,
-        Status = TicketStatus.Completed
-    };
-    return taskRepository.UpdateAsync(task, ct);
-}
+        logger.LogInformation("Handling TicketCompletedEvent");
+        var task = await taskRepository.GetByIdAsync(eventModel.Id, ct)
+                   ?? throw new NotFoundException<Ticket>(eventModel.Id);
+        task.Status = TicketStatus.Completed;
+        await taskRepository.UpdateAsync(task, ct);
+    }
 
-public Task HandleAsync(TicketAssignedEvent eventModel, CancellationToken ct)
-{
-    logger.LogInformation("Handling TicketAssignedEvent");
-    var task = new Ticket
+    public async Task HandleAsync(TicketAssignedEvent eventModel, CancellationToken ct)
     {
-        Id = eventModel.Id,
-        AssigneeId = eventModel.AssigneeId
-    };
-    return taskRepository.UpdateAsync(task, ct);
-}
+        logger.LogInformation("Handling TicketAssignedEvent");
+        var task = await taskRepository.GetByIdAsync(eventModel.Id, ct)
+                   ?? throw new NotFoundException<Ticket>(eventModel.Id);
+    
+        task.AssigneeId = eventModel.AssigneeId;
+        await taskRepository.UpdateAsync(task, ct);
+    }
 
-public Task HandleAsync(ProjectUpdatedEvent eventModel, CancellationToken ct)
-{
-    logger.LogInformation("Handling ProjectUpdatedEvent");
-    var project = new Project
+    public async Task HandleAsync(ProjectUpdatedEvent eventModel, CancellationToken ct)
     {
-        Id = eventModel.Id,
-        Title = eventModel.Title ?? string.Empty
-    };
-    return projectRepository.UpdateAsync(project, ct);
-}
+        logger.LogInformation("Handling ProjectUpdatedEvent");
+        var project = await projectRepository.GetByIdAsync(eventModel.Id, ct)
+            ?? throw new NotFoundException<Project>(eventModel.Id);
 
-public Task HandleAsync(EpicUpdatedEvent eventModel, CancellationToken ct)
-{
-    logger.LogInformation("Handling EpicUpdatedEvent");
-    var epic = new Epic
+        project.Title = eventModel.Title ?? project.Title;
+        await projectRepository.UpdateAsync(project, ct);
+    }
+
+    public async Task HandleAsync(EpicUpdatedEvent eventModel, CancellationToken ct)
     {
-        Id = eventModel.Id,
-        Title = eventModel.Title ?? string.Empty
-    };
-    return epicRepository.UpdateAsync(epic, ct);
-}
+        logger.LogInformation("Handling EpicUpdatedEvent");
+        var epic = await epicRepository.GetByIdAsync(eventModel.Id, ct)
+            ?? throw new NotFoundException<Epic>(eventModel.Id);
+
+        epic.Title = eventModel.Title ?? epic.Title;
+        await epicRepository.UpdateAsync(epic, ct);
+    }
 
     public Task HandleAsync(TicketDeletedEvent eventModel, CancellationToken ct)
     {

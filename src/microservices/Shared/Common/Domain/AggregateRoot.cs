@@ -37,12 +37,21 @@ public abstract class AggregateRoot<TEntity> : IAggregateRoot where TEntity : En
 
             if (entityProperty == null || !entityProperty.CanWrite) continue;
             
-            var value = eventProperty.GetValue(@event); 
-            var convertedValue = value != null 
-                ? Convert.ChangeType(value, entityProperty.PropertyType) 
-                : null;
+            var value = eventProperty.GetValue(@event);
 
-            entityProperty.SetValue(this, convertedValue);
+            object? convertedValue = null;
+            if(entityProperty.PropertyType == eventProperty.PropertyType)
+            {
+                convertedValue = value;
+            }
+            else
+            {
+                convertedValue = value != null 
+                    ? Convert.ChangeType(value, entityProperty.PropertyType) 
+                    : null;
+            }
+
+            entityProperty.SetValue(Entity, convertedValue);
         }
     }
 
