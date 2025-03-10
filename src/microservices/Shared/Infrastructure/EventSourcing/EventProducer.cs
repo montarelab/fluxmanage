@@ -25,10 +25,11 @@ public class EventProducer(IOptions<ProducerConfig> optionsConfig, ILogger<Event
         };
 
         var deliveryResults = await producer.ProduceAsync(topic, eventMessage);
-        logger.LogInformation($"Message was delivered to the topic - {topic} with key - {eventMessage.Key}");
+        logger.LogInformation("Message was delivered to the topic - {Topic} with key - {Key}", topic, eventMessage.Key);
         
         if (deliveryResults.Status == PersistenceStatus.NotPersisted)
         {
+            logger.LogError("Could not use {EventType} message to topic - {Topic} due to the following reason: {Reason}", @event.GetType().Name, topic, deliveryResults.Message);
             throw new Exception($"Could not use {@event.GetType().Name} message to topic - {topic} due to the following reason: {deliveryResults.Message}!");
         }
     }
