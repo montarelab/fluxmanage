@@ -1,11 +1,15 @@
+using Common.Domain.Entities;
 using FastEndpoints;
+using Mapster;
+using TaskRead.Dto;
+using TaskRead.Services;
 
 namespace TaskRead.Projects;
 
 public static class GetProjectById
 {
     public record GetProjectByIdQuery(Guid Id) : ICommand<GetProjectByIdResponse>;
-    public record GetProjectByIdResponse(Guid Id);
+    public record GetProjectByIdResponse(ProjectDto Project);
 
     public class Endpoint : EndpointWithoutRequest<GetProjectByIdResponse>
     {
@@ -24,12 +28,16 @@ public static class GetProjectById
         }
     }
 
-    public class CommandHandler : ICommandHandler<GetProjectByIdQuery, GetProjectByIdResponse>
+    public class CommandHandler (
+        ILogger<CommandHandler> logger,
+        IRepository<Project> repo)
+        : ICommandHandler<GetProjectByIdQuery, GetProjectByIdResponse>
     {
-        public Task<GetProjectByIdResponse> ExecuteAsync(GetProjectByIdQuery command, CancellationToken ct)
+        public async Task<GetProjectByIdResponse> ExecuteAsync(GetProjectByIdQuery command, CancellationToken ct)
         {
-            Console.WriteLine(command.Id);
-            return Task.FromResult(new GetProjectByIdResponse(Guid.NewGuid()));
+            logger.LogInformation($"Query project by id {command.Id}");
+            var project = await repo.GetByIdAsync(command.Id, ct);
+            return new GetProjectByIdResponse(project.Adapt<ProjectDto>());
         }
     }
 }

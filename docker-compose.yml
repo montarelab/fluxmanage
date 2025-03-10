@@ -48,8 +48,8 @@ services:
     networks:
       - fluxmanage
 
-  mongodb:
-    container_name: mongodb
+  mongo:
+    container_name: mongo
     image: mongo
     restart: always
     ports:

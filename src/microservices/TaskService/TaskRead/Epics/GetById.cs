@@ -1,11 +1,15 @@
+using Common.Domain.Entities;
 using FastEndpoints;
+using Mapster;
+using TaskRead.Dto;
+using TaskRead.Services;
 
 namespace TaskRead.Epics;
 
 public static class GetEpicById
 {
     public record GetEpicByIdQuery(Guid Id) : ICommand<GetEpicByIdResponse>;
-    public record GetEpicByIdResponse(Guid Id);
+    public record GetEpicByIdResponse(EpicDto Epic);
 
     public class Endpoint : EndpointWithoutRequest<GetEpicByIdResponse>
     {
@@ -24,12 +28,16 @@ public static class GetEpicById
         }
     }
 
-    public class CommandHandler : ICommandHandler<GetEpicByIdQuery, GetEpicByIdResponse>
+    public class CommandHandler(
+        ILogger<CommandHandler> logger,
+        IRepository<Epic> repo)
+        : ICommandHandler<GetEpicByIdQuery, GetEpicByIdResponse>
     {
-        public Task<GetEpicByIdResponse> ExecuteAsync(GetEpicByIdQuery command, CancellationToken ct)
+        public async Task<GetEpicByIdResponse> ExecuteAsync(GetEpicByIdQuery command, CancellationToken ct)
         {
-            Console.WriteLine(command.Id);
-            return Task.FromResult(new GetEpicByIdResponse(Guid.NewGuid()));
+            logger.LogInformation($"Query epic by id {command.Id}");
+            var epic = await repo.GetByIdAsync(command.Id, ct);
+            return new GetEpicByIdResponse(epic.Adapt<EpicDto>());
         }
     }
 }

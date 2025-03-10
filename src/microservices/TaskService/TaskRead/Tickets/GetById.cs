@@ -1,35 +1,43 @@
+using Common.Domain.Entities;
 using FastEndpoints;
+using Mapster;
+using TaskRead.Dto;
+using TaskRead.Services;
 
 namespace TaskRead.Tickets;
 
-public static class GetTaskById
+public static class GetTicketById
 {
-    public record GetTaskByIdQuery(Guid Id) : ICommand<GetTaskByIdResponse>;
-    public record GetTaskByIdResponse(Guid Id);
-    
-    public class Endpoint : EndpointWithoutRequest<GetTaskByIdResponse>
+    public record GetTicketByIdQuery(Guid Id) : ICommand<GetTicketByIdResponse>;
+    public record GetTicketByIdResponse(TicketDto Ticket);
+
+    public class Endpoint : EndpointWithoutRequest<GetTicketByIdResponse>
     {
         public override void Configure()
         {
-            Get("/tasks/getById/{id:guid}");
-            AllowAnonymous(); 
+            Get("/tickets/getById/{id:guid}");
+            AllowAnonymous();
             // todo introduce permissions
         }
 
         public override async Task HandleAsync(CancellationToken ct)
         {
             var id = Route<Guid>("id");
-            var result = await new GetTaskByIdQuery(id).ExecuteAsync(ct);
+            var result = await new GetTicketByIdQuery(id).ExecuteAsync(ct);
             await SendOkAsync(result, ct);
         }
     }
-    
-    public class CommandHandler : ICommandHandler<GetTaskByIdQuery, GetTaskByIdResponse>
+
+    public class CommandHandler(
+        ILogger<CommandHandler> logger,
+        IRepository<Ticket> repo)
+        : ICommandHandler<GetTicketByIdQuery, GetTicketByIdResponse>
     {
-        public Task<GetTaskByIdResponse> ExecuteAsync(GetTaskByIdQuery command, CancellationToken ct)
+        public async Task<GetTicketByIdResponse> ExecuteAsync(GetTicketByIdQuery command, CancellationToken ct)
         {
-            Console.WriteLine(command.Id);
-            return Task.FromResult(new GetTaskByIdResponse(Guid.NewGuid()));
+            logger.LogInformation($"Query task by id {command.Id}");
+            var task = await repo.GetByIdAsync(command.Id, ct);
+            return new GetTicketByIdResponse(task.Adapt<TicketDto>());
         }
     }
 }

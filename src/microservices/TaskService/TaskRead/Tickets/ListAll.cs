@@ -1,17 +1,21 @@
+using Common.Domain.Entities;
 using FastEndpoints;
+using Mapster;
+using TaskRead.Dto;
+using TaskRead.Services;
 
 namespace TaskRead.Tickets;
 
-public static class ListAll
+public static class ListAllTickets
 {
-    public record ListAllTasksQuery(Guid ProjectId) : ICommand<ListAllTasksResponse>;
-    public record ListAllTasksResponse(Guid Id); // todo fix it
-    
-    public class Endpoint : EndpointWithoutRequest<ListAllTasksResponse>
+    public record ListAllTicketQuery(Guid ProjectId) : ICommand<ListAllTicketsResponse>;
+    public record ListAllTicketsResponse(IEnumerable<TicketDto> Tickets);
+
+    public class Endpoint : EndpointWithoutRequest<ListAllTicketsResponse>
     {
         public override void Configure()
         {
-            Get("/tasks/all/{projectId:guid}");
+            Get("/tickets/all/{projectId:guid}");
             AllowAnonymous();
             // todo introduce permissions
         }
@@ -19,18 +23,21 @@ public static class ListAll
         public override async Task HandleAsync(CancellationToken ct)
         {
             var projectId = Route<Guid>("projectId");
-            var result = await new ListAllTasksQuery(projectId).ExecuteAsync(ct);
+            var result = await new ListAllTicketQuery(projectId).ExecuteAsync(ct);
             await SendOkAsync(result, ct);
         }
     }
-    
-    public class CommandHandler : ICommandHandler<ListAllTasksQuery, ListAllTasksResponse>
+
+    public class CommandHandler(
+        ILogger<CommandHandler> logger,
+        IRepository<Ticket> repo)
+        : ICommandHandler<ListAllTicketQuery, ListAllTicketsResponse>
     {
-        public Task<ListAllTasksResponse> ExecuteAsync(ListAllTasksQuery command, CancellationToken ct)
+        public async Task<ListAllTicketsResponse> ExecuteAsync(ListAllTicketQuery command, CancellationToken ct)
         {
-            Console.WriteLine(command.ProjectId);
-            // todo data processing
-            return Task.FromResult(new ListAllTasksResponse(Guid.NewGuid()));
+            logger.LogInformation($"Query all tickets for project {command.ProjectId}");
+            var tickets = await repo.GetAllAsync(t => t.ProjectId == command.ProjectId, ct);
+            return new ListAllTicketsResponse(tickets.Adapt<IEnumerable<TicketDto>>());
         }
     }
 }
