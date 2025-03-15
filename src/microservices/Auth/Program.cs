@@ -42,6 +42,12 @@ builder.Services.AddAuthentication(authBuilder =>
         };
 
         jwtOptions.MapInboundClaims = false;
+    })
+    .AddGoogleOpenIdConnect(googleOptions =>
+    {
+        var googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+        googleOptions.ClientId = googleAuthNSection["ClientId"];
+        googleOptions.ClientSecret = googleAuthNSection["ClientSecret"];
     });
 
 builder.Services.AddAuthorization();
