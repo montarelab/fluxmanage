@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Common.Config;
 using Microsoft.Extensions.Options;
@@ -10,8 +11,8 @@ namespace Auth.JWT;
 public class TokenService(IOptions<ApiConfig> configuration) : ITokenService
 {
     private readonly ApiConfig config = configuration.Value;
-    
-    public string GenerateToken(string username)
+
+    public string GenerateAccessToken(string username)
     {
         var claims = new[]
         {
@@ -30,5 +31,13 @@ public class TokenService(IOptions<ApiConfig> configuration) : ITokenService
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public string GenerateRefreshToken()
+    {
+        byte[] randomNumber = new byte[32];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
     }
 }

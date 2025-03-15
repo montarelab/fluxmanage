@@ -2,5 +2,6 @@ namespace Auth.JWT;
 
 public interface ITokenService
 {
-    string GenerateToken(string username);
+    string GenerateAccessToken(string username);
+    string GenerateRefreshToken();
 }
