@@ -11,4 +11,5 @@ src/microservices/Shared/Infrastructure/obj/
 src/microservices/Shared/Infrastructure/bin/
 src/microservices/Auth/obj/
 src/microservices/Auth/bin/
+src/microservices/Auth/Properties/config.Development.json
 fluxmanage.sln.DotSettings.user
