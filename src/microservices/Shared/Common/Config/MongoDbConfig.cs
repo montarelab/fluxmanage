@@ -1,4 +1,4 @@
-namespace Infrastructure.Config;
+namespace Common.Config;
 
 public class MongoDbConfig
 {

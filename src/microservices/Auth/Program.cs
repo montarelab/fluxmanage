@@ -1,44 +1,82 @@
+using Auth.DataAccess;
+using Auth.Entities;
+using Auth.JWT;
+using Common.Config;
+using FastEndpoints;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// todo throw a variable in docker-compose to set the config path
+var configPath = Environment.GetEnvironmentVariable("APP_CONFIG_PATH");
+builder.Configuration.AddJsonFile(configPath!, optional: false, reloadOnChange: true);
+builder.Services.Configure<ApiConfig>(builder.Configuration.GetSection(nameof(ApiConfig)));
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("NpgSQL"))); 
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddAuthentication(authBuilder =>
+    {
+        authBuilder.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        authBuilder.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        authBuilder.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(jwtOptions =>
+    {
+        var apiConfig = builder.Configuration.GetSection(nameof(ApiConfig)).Get<ApiConfig>()!;
+        jwtOptions.MetadataAddress = apiConfig.MetadataAddress;
+        jwtOptions.Authority = apiConfig.Authority;
+        jwtOptions.Audience = apiConfig.Audience;
+        jwtOptions.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            ValidAudiences = apiConfig.ValidAudiences.Split(';'),
+            ValidIssuers = apiConfig.ValidIssuers.Split(';')
+        };
+
+        jwtOptions.MapInboundClaims = false;
+    });
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+    {
+        options.Password.RequiredLength = 6;
+        options.Password.RequireDigit = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.User.RequireUniqueEmail = true;
+    })
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+var requireAuthPolicy = new AuthorizationPolicyBuilder()
+    .RequireAuthenticatedUser()
+    .Build();
+
+builder.Services.AddAuthorizationBuilder()
+    .SetDefaultPolicy(requireAuthPolicy);
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
-
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+app.MapGet("/hello", [Authorize] () => "Hi");
+

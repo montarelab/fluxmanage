@@ -1,0 +1,14 @@
+{
+  "ConnectionString": {
+    "NpgSQL": "Server=.;Database=Auth;Trusted_Connection=True;MultipleActiveResultSets=true"
+  },
+  "ApiConfig": {
+    "MetadataAddress": "",
+    "ValidAudiences": "",
+    "ValidIssuers": "",
+    "Authority": "",
+    "Audience": "",
+    "Secret": "",
+    "Issuer": ""
+  }
+}

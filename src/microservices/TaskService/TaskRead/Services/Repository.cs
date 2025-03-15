@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
+using Common.Config;
 using Common.Domain.Entities;
-using Infrastructure.Config;
 using Infrastructure.EventSourcing;
 using Microsoft.Extensions.Options;
 

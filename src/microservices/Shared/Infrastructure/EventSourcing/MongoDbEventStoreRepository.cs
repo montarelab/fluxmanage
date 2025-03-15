@@ -1,6 +1,6 @@
+using Common.Config;
 using Common.Events;
 using Common.EventSourcing;
-using Infrastructure.Config;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
