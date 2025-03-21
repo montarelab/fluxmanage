@@ -1,12 +1,9 @@
-import { auth } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
-
 export default function CenteredLayout(props: { children: React.ReactNode }) {
-  const { userId } = auth();
+  // const { userId } = null;
 
-  if (userId) {
-    redirect('/dashboard');
-  }
+  // if (userId) {
+  //   redirect("/dashboard");
+  // }
 
   return (
     <div className="flex min-h-screen items-center justify-center">

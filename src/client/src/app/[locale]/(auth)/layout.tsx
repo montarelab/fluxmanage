@@ -1,21 +1,20 @@
-'use client';
+"use client";
 
-import { enUS, frFR } from '@clerk/localizations';
-import { ClerkProvider } from '@clerk/nextjs';
+import { enUS, frFR } from "@clerk/localizations";
 
-import { AppConfig } from '@/utils/AppConfig';
+import { AppConfig } from "@/utils/AppConfig";
 
 export default function AuthLayout(props: {
   children: React.ReactNode;
   params: { locale: string };
 }) {
   let clerkLocale = enUS;
-  let signInUrl = '/sign-in';
-  let signUpUrl = '/sign-up';
-  let dashboardUrl = '/dashboard';
-  let afterSignOutUrl = '/';
+  let signInUrl = "/sign-in";
+  let signUpUrl = "/sign-up";
+  let dashboardUrl = "/dashboard";
+  let afterSignOutUrl = "/";
 
-  if (props.params.locale === 'fr') {
+  if (props.params.locale === "fr") {
     clerkLocale = frFR;
   }
 
@@ -27,16 +26,16 @@ export default function AuthLayout(props: {
   }
 
   return (
-    <ClerkProvider
-      // PRO: Dark mode support for Clerk
-      localization={clerkLocale}
-      signInUrl={signInUrl}
-      signUpUrl={signUpUrl}
-      signInFallbackRedirectUrl={dashboardUrl}
-      signUpFallbackRedirectUrl={dashboardUrl}
-      afterSignOutUrl={afterSignOutUrl}
-    >
+    // <ClerkProvider
+    //   // PRO: Dark mode support for Clerk
+    //   localization={clerkLocale}
+    //   signInUrl={signInUrl}
+    //   signUpUrl={signUpUrl}
+    //   signInFallbackRedirectUrl={dashboardUrl}
+    //   signUpFallbackRedirectUrl={dashboardUrl}
+    //   afterSignOutUrl={afterSignOutUrl}
+    // >
       {props.children}
-    </ClerkProvider>
+    // </ClerkProvider>
   );
 }

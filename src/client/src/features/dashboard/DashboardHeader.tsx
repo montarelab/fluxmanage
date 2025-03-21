@@ -1,21 +1,20 @@
-'use client';
+"use client";
 
-import { OrganizationSwitcher, UserButton } from '@clerk/nextjs';
-import Link from 'next/link';
-import { useLocale } from 'next-intl';
+// import Link from "next/link";
+// import { useLocale } from "next-intl";
 
-import { ActiveLink } from '@/components/ActiveLink';
-import { LocaleSwitcher } from '@/components/LocaleSwitcher';
-import { ToggleMenuButton } from '@/components/ToggleMenuButton';
+import { ActiveLink } from "@/components/ActiveLink";
+import { LocaleSwitcher } from "@/components/LocaleSwitcher";
+import { ToggleMenuButton } from "@/components/ToggleMenuButton";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Separator } from '@/components/ui/separator';
-import { Logo } from '@/templates/Logo';
-import { getI18nPath } from '@/utils/Helpers';
+} from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
+import { Logo } from "@/templates/Logo";
+import { getI18nPath } from "@/utils/Helpers";
 
 export const DashboardHeader = (props: {
   menu: {
@@ -23,14 +22,14 @@ export const DashboardHeader = (props: {
     label: string;
   }[];
 }) => {
-  const locale = useLocale();
+  // const locale = useLocale();
 
   return (
     <>
       <div className="flex items-center">
-        <Link href="/dashboard" className="max-sm:hidden">
+        {/* <Link href="/dashboard" className="max-sm:hidden">
           <Logo />
-        </Link>
+        </Link> */}
 
         <svg
           className="size-8 stroke-muted-foreground max-sm:hidden"
@@ -44,25 +43,25 @@ export const DashboardHeader = (props: {
           <path d="M17 5 7 19" />
         </svg>
 
-        <OrganizationSwitcher
+        {/* <OrganizationSwitcher
           organizationProfileMode="navigation"
           organizationProfileUrl={getI18nPath(
-            '/dashboard/organization-profile',
-            locale,
+            "/dashboard/organization-profile",
+            locale
           )}
           afterCreateOrganizationUrl="/dashboard"
           hidePersonal
           skipInvitationScreen
           appearance={{
             elements: {
-              organizationSwitcherTrigger: 'max-w-28 sm:max-w-52',
+              organizationSwitcherTrigger: "max-w-28 sm:max-w-52",
             },
           }}
-        />
+        /> */}
 
         <nav className="ml-3 max-lg:hidden">
           <ul className="flex flex-row items-center gap-x-3 text-lg font-medium [&_a:hover]:opacity-100 [&_a]:opacity-75">
-            {props.menu.map(item => (
+            {props.menu.map((item) => (
               <li key={item.href}>
                 <ActiveLink href={item.href}>{item.label}</ActiveLink>
               </li>
@@ -80,9 +79,9 @@ export const DashboardHeader = (props: {
                   <ToggleMenuButton />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  {props.menu.map(item => (
+                  {props.menu.map((item) => (
                     <DropdownMenuItem key={item.href} asChild>
-                      <Link href={item.href}>{item.label}</Link>
+                      {/* <Link href={item.href}>{item.label}</Link> */}
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
@@ -101,15 +100,15 @@ export const DashboardHeader = (props: {
           </li>
 
           <li>
-            <UserButton
+            {/* <UserButton
               userProfileMode="navigation"
               userProfileUrl="/dashboard/user-profile"
               appearance={{
                 elements: {
-                  rootBox: 'px-2 py-1.5',
+                  rootBox: "px-2 py-1.5",
                 },
               }}
-            />
+            /> */}
           </li>
         </ul>
       </div>
