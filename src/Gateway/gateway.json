@@ -1,35 +1,50 @@
 {
   "ReverseProxy": {
     "Routes": {
-      "route1": {
-        "ClusterId": "clusterEarthquakes",
+      "task-write-route": {
+        "ClusterId": "task-write-cluster",
         "RateLimiterPolicy": "FixedRatePolicy",
         "Match": {
-          "Path": "earthquakes/{**catch-all}"
+          "Path": "task-write/{**catch-all}"
         }
       },
-      "route2": {
-        "ClusterId": "clusterVolcanoes",
+      "task-read-route": {
+        "ClusterId": "task-read-cluster",
         "RateLimiterPolicy": "FixedRatePolicy",
         "Match": {
-          "Path": "volcanoes/{**catch-all}"
+          "Path": "task-read/{**catch-all}"
+        }
+      },
+      "auth-route": {
+        "ClusterId": "auth-cluster",
+        "RateLimiterPolicy": "FixedRatePolicy",
+        "Match": {
+          "Path": "auth/{**catch-all}"
         }
       }
     },
     "Clusters": {
-      "clusterEarthquakes": {
+      "task-write-cluster": {
         "LoadBalancingPolicy": "RoundRobin",
         "Destinations": {
           "destination1": {
-            "Address": "http://earthquakes:8001"
+            "Address": "http://task-write:8001"
           }
         }
       },
-      "clusterVolcanoes": {
+      "task-read-cluster": {
         "LoadBalancingPolicy": "RoundRobin",
         "Destinations": {
           "destination1": {
-            "Address": "http://volcanoes:8002"
+            "Address": "http://task-read:8002"
+          }
+        }
+      },
+      "auth-cluster": {
+        "LoadBalancingPolicy": "RoundRobin",
+        "Destinations": {
+          "destination1": {
+            "Address": "http://auth:8003"
           }
         }
       }
