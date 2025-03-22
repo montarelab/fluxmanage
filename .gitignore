@@ -34,8 +34,6 @@ local.settings.json
 
 # Ignore Docker and container-related files
 [Dd]ocker-[Cc]ompose.*
-[Dd]ockerfile
-[Dd]ockerfile.*
 [Dd]ocker-[Cc]ontext/
 [Dd]ocker-[Vv]olumes/
 

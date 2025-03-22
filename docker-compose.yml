@@ -120,6 +120,38 @@ services:
       - ./src/Gateway/gateway.json:/app/gateway.json
     networks:
       - fluxmanage
+
+  auth:
+    container_name: auth
+    build:
+      context: .
+      dockerfile: src/microservices/Auth/Dockerfile
+    ports:
+      - "6003:8001"
+    volumes:
+      - ./src/microservices/Auth/Properties/config.Development.json:/app/config.Development.json
+    environment:
+      - ASPNETCORE_URLS=http://+:8001
+      - ASPNETCORE_ENVIRONMENT=Development
+      - APP_CONFIG_PATH=/app/appsettings.Development.json
+    depends_on:
+      - postgres
+    networks:
+      - fluxmanage
+
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=fluxmanage
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - fluxmanage
     
 volumes:
   zookeeper_data:
@@ -128,7 +160,8 @@ volumes:
     driver: local
   mongodb_data:
     driver: local
-
+  postgres_data:
+    driver: local
 
 networks:
   fluxmanage:

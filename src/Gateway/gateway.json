@@ -36,7 +36,7 @@
         "LoadBalancingPolicy": "RoundRobin",
         "Destinations": {
           "destination1": {
-            "Address": "http://task-read:8002"
+            "Address": "http://task-read:8001"
           }
         }
       },
@@ -44,7 +44,7 @@
         "LoadBalancingPolicy": "RoundRobin",
         "Destinations": {
           "destination1": {
-            "Address": "http://auth:8003"
+            "Address": "http://auth:8001"
           }
         }
       }
