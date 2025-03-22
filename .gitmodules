@@ -1,0 +1,3 @@
+[submodule "src/client/my-app"]
+	path = src/client/my-app
+	url = https://github.com/montarelab/fluxmanage-client
