@@ -1,4 +1,3 @@
-
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.RateLimiting;
@@ -6,7 +5,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("gateway.json", optional: false, reloadOnChange: true);
 
-builder.AddServiceDefaults();
+// Remove the Aspire service defaults line
+// builder.AddServiceDefaults();
 
 /*
 
@@ -42,8 +42,9 @@ var app = builder.Build();
 
 app.MapGet("/hello" , () => "Hello World!");
 
-app.MapReverseProxy();
+app.UseCors();
 app.UseRateLimiter();
+app.MapReverseProxy();
 
 app.MapFallback(async context =>
 {

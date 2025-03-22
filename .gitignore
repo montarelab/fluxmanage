@@ -1,3 +1,5 @@
+config.Development.json
+
 # Ignore build artifacts
 [Bb]in/
 [Oo]bj/
