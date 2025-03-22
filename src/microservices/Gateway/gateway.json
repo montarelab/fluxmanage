@@ -1,0 +1,38 @@
+{
+  "ReverseProxy": {
+    "Routes": {
+      "route1": {
+        "ClusterId": "clusterEarthquakes",
+        "RateLimiterPolicy": "FixedRatePolicy",
+        "Match": {
+          "Path": "earthquakes/{**catch-all}"
+        }
+      },
+      "route2": {
+        "ClusterId": "clusterVolcanoes",
+        "RateLimiterPolicy": "FixedRatePolicy",
+        "Match": {
+          "Path": "volcanoes/{**catch-all}"
+        }
+      }
+    },
+    "Clusters": {
+      "clusterEarthquakes": {
+        "LoadBalancingPolicy": "RoundRobin",
+        "Destinations": {
+          "destination1": {
+            "Address": "http://earthquakes:8001"
+          }
+        }
+      },
+      "clusterVolcanoes": {
+        "LoadBalancingPolicy": "RoundRobin",
+        "Destinations": {
+          "destination1": {
+            "Address": "http://volcanoes:8002"
+          }
+        }
+      }
+    }
+  }
+}

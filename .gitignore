@@ -1,15 +1,95 @@
-src/microservices/Shared/Common/obj/
-src/microservices/Shared/Common/bin/
-src/microservices/TaskService/TaskCommon/obj/
-src/microservices/TaskService/TaskCommon/bin/
-src/microservices/TaskService/TaskRead/obj/
-src/microservices/TaskService/TaskRead/bin/
-src/microservices/TaskService/TaskWrite/obj/
-src/microservices/TaskService/TaskWrite/bin/
-.idea
-src/microservices/Shared/Infrastructure/obj/
-src/microservices/Shared/Infrastructure/bin/
-src/microservices/Auth/obj/
-src/microservices/Auth/bin/
-src/microservices/Auth/Properties/config.Development.json
-fluxmanage.sln.DotSettings.user
+# Ignore build artifacts
+[Bb]in/
+[Oo]bj/
+
+# Ignore user-specific files
+*.user
+*.suo
+*.userprefs
+*.lock.json
+
+# Ignore NuGet packages and related files
+[Nn]u[Gg]et/
+*.nupkg
+packages/
+nuget.exe
+
+# Ignore local development files
+.vs/
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Ignore test results and coverage
+[Tt]est[Rr]esults/
+[Cc]overage/
+*.coverage
+*.coverage.xml
+
+# Ignore Azure functions local settings
+local.settings.json
+
+# Ignore Docker and container-related files
+[Dd]ocker-[Cc]ompose.*
+[Dd]ockerfile
+[Dd]ockerfile.*
+[Dd]ocker-[Cc]ontext/
+[Dd]ocker-[Vv]olumes/
+
+# Ignore logs and diagnostics
+[Ll]ogs/
+[Dd]iagnostics/
+*.log
+*.log.*
+
+# Ignore ReSharper and Rider files
+_ReSharper.*/
+*.resharper
+*.rider
+
+# Ignore temp files
+[Tt]emp/
+[Tt]mp/
+
+# Ignore macOS files
+.DS_Store
+
+# Ignore IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Ignore output files
+out/
+dist/
+publish/
+
+# Ignore Azure Functions local settings
+local.settings.json
+
+# Ignore .NET Core specific files
+appsettings.Development.json
+appsettings.Local.json
+appsettings.Production.json
+appsettings.Staging.json
+
+# Ignore Rider specific files
+.idea/
+*.sln.iml
+
+# Ignore Visual Studio specific files
+*.VC.db
+*.VC.VC.opendb
+*.VC.VC.db
+*.VC.VC.db-shm
+*.VC.VC.db-wal
+
+# Ignore SQL Server files
+*.mdf
+*.ldf
+*.ndf
+
+# Ignore Entity Framework migrations
+[Mm]igrations/
