@@ -32,11 +32,11 @@ services:
       context: .
       dockerfile: src/microservices/TaskService/TaskWrite/Dockerfile
     ports:
-      - "6001:8001"
+      - "6001:8002"
     volumes:
       - ./src/microservices/TaskService/TaskWrite/Properties/config.Development.json:/app/config.Development.json
     environment:
-      - ASPNETCORE_URLS=http://+:8001
+      - ASPNETCORE_URLS=http://+:8002
       - ASPNETCORE_ENVIRONMENT=Development
       - KAFKA_TOPIC=FluxManageEvents
       - APP_CONFIG_PATH=/app/config.Development.json
@@ -101,8 +101,13 @@ services:
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://gateway:8000
-    depends_on:
-      - gateway
+    develop:
+      watch:
+        - action: rebuild
+          path: src/client/my-app
+          target: /app
+    # depends_on:
+      # - gateway
     networks:
       - fluxmanage
       
@@ -127,11 +132,11 @@ services:
       context: .
       dockerfile: src/microservices/Auth/Dockerfile
     ports:
-      - "6003:8001"
+      - "6003:8003"
     volumes:
       - ./src/microservices/Auth/Properties/config.Development.json:/app/config.Development.json
     environment:
-      - ASPNETCORE_URLS=http://+:8001
+      - ASPNETCORE_URLS=http://+:8003
       - ASPNETCORE_ENVIRONMENT=Development
       - APP_CONFIG_PATH=/app/appsettings.Development.json
     depends_on:

@@ -28,7 +28,7 @@
         "LoadBalancingPolicy": "RoundRobin",
         "Destinations": {
           "destination1": {
-            "Address": "http://task-write:8001"
+            "Address": "http://task-write:8002"
           }
         }
       },
@@ -44,7 +44,7 @@
         "LoadBalancingPolicy": "RoundRobin",
         "Destinations": {
           "destination1": {
-            "Address": "http://auth:8001"
+            "Address": "http://auth:8003"
           }
         }
       }

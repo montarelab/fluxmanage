@@ -21,6 +21,16 @@ builder.Services.Configure<ProducerConfig>(builder.Configuration.GetSection(name
 
 var assembly = Assembly.GetExecutingAssembly();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", builder =>
+    {
+        builder.WithOrigins("http://localhost:3000") // Allow frontend URL
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddScoped<IRepository<Ticket>, TicketMongoRepository>();
 builder.Services.AddScoped<IRepository<Epic>, EpicMongoRepository>();
 builder.Services.AddScoped<IRepository<Project>, ProjectMongoRepository>();
@@ -36,6 +46,7 @@ builder.Services.AddFastEndpoints().SwaggerDocument();
 
 var app = builder.Build();
 
+app.UseCors("AllowFrontend"); // Ensure this comes before UseRouting()
 app.UseSwaggerUtils();
 app.UseFastEndpoints();
 app.UseHttpsRedirection();
