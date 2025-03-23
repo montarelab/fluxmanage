@@ -103,7 +103,7 @@ services:
       - NEXT_PUBLIC_API_URL=http://gateway:8000
     develop:
       watch:
-        - action: rebuild
+        - action: restart
           path: .
           target: /app
     # depends_on:

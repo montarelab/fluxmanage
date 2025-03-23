@@ -7,7 +7,7 @@ namespace TaskWrite.Epics;
 
 public static class RenameEpic
 {
-    public record RenameEpicRequest(Guid Id, string NewTitle);
+    public record RenameEpicRequest(Guid Id, string Title);
     public record RenameEpicResponse(Guid Id);
     
     public class Validator : Validator<RenameEpicRequest>
@@ -18,7 +18,7 @@ public static class RenameEpic
                 .MustAsync(async (id, _) => await eventSourcingHandler.GetAggregateByIdAsync(id) != null)
                 .WithMessage((_, id) => $"Epic by id {id} not found");
             
-            RuleFor(x => x.NewTitle)
+            RuleFor(x => x.Title)
                 .NotEmpty()
                 .WithMessage("Title is required")
                 .MaximumLength(20)
@@ -41,7 +41,7 @@ public static class RenameEpic
         public override async Task HandleAsync(RenameEpicRequest req, CancellationToken ct)
         {
             var epic = (await EventSourcingHandler.GetAggregateByIdAsync(req.Id))!;
-            epic.EditName(req.NewTitle);
+            epic.EditName(req.Title);
             await EventSourcingHandler.SaveAggregateAsync(epic);
             await SendOkAsync(new RenameEpicResponse(epic.Entity.Id), ct);
         }

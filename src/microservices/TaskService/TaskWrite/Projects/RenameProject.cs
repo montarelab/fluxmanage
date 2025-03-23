@@ -7,7 +7,7 @@ namespace TaskWrite.Projects;
 
 public static class RenameProject
 {
-    public record RenameProjectRequest(Guid Id, string NewTitle);
+    public record RenameProjectRequest(Guid Id, string Title);
     public record RenameProjectResponse(Guid Id);
     
     public class Validator : Validator<RenameProjectRequest>
@@ -18,7 +18,7 @@ public static class RenameProject
                 .MustAsync(async (id, _) => await eventSourcingHandler.GetAggregateByIdAsync(id) != null)
                 .WithMessage((_, id) => $"Project by id {id} not found");
             
-            RuleFor(x => x.NewTitle)
+            RuleFor(x => x.Title)
                 .NotEmpty()
                 .WithMessage("Title is required")
                 .MaximumLength(20)
@@ -40,7 +40,7 @@ public static class RenameProject
         public override async Task HandleAsync(RenameProjectRequest req, CancellationToken ct)
         {
             var project = (await EventSourcingHandler.GetAggregateByIdAsync(req.Id))!;
-            project.EditName(req.NewTitle);
+            project.EditName(req.Title);
             await EventSourcingHandler.SaveAggregateAsync(project);
             await SendOkAsync(new RenameProjectResponse(project.Entity.Id), ct);
         }
