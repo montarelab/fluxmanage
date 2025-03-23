@@ -16,6 +16,16 @@ var configPath = Environment.GetEnvironmentVariable("APP_CONFIG_PATH");
 builder.Configuration.AddJsonFile(configPath!, optional: false, reloadOnChange: true);
 builder.Services.AddMongoDb(builder.Configuration);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", builder =>
+    {
+        builder.WithOrigins("http://localhost:3000") // Allow frontend URL
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+    });
+});
+
 builder.Services.Configure<ProducerConfig>(builder.Configuration.GetSection(nameof(ProducerConfig)));
 
 var assembly = Assembly.GetExecutingAssembly();
@@ -33,6 +43,9 @@ builder.Services.AddSwagger("Write Task Api");
 builder.Services.AddFastEndpoints();
 
 var app = builder.Build();
+
+app.UseCors("AllowFrontend"); 
+app.UseRouting();
 
 app.UseSwaggerUtils();
 app.UseFastEndpoints();

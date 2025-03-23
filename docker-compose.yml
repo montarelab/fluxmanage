@@ -104,7 +104,7 @@ services:
     develop:
       watch:
         - action: rebuild
-          path: src/client/my-app
+          path: .
           target: /app
     # depends_on:
       # - gateway
@@ -126,23 +126,23 @@ services:
     networks:
       - fluxmanage
 
-  auth:
-    container_name: auth
-    build:
-      context: .
-      dockerfile: src/microservices/Auth/Dockerfile
-    ports:
-      - "6003:8003"
-    volumes:
-      - ./src/microservices/Auth/Properties/config.Development.json:/app/config.Development.json
-    environment:
-      - ASPNETCORE_URLS=http://+:8003
-      - ASPNETCORE_ENVIRONMENT=Development
-      - APP_CONFIG_PATH=/app/appsettings.Development.json
-    depends_on:
-      - postgres
-    networks:
-      - fluxmanage
+  # auth:
+  #   container_name: auth
+  #   build:
+  #     context: .
+  #     dockerfile: src/microservices/Auth/Dockerfile
+  #   ports:
+  #     - "6003:8003"
+  #   volumes:
+  #     - ./src/microservices/Auth/Properties/config.Development.json:/app/config.Development.json
+  #   environment:
+  #     - ASPNETCORE_URLS=http://+:8003
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #     - APP_CONFIG_PATH=/app/appsettings.Development.json
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - fluxmanage
 
   postgres:
     container_name: postgres
